@@ -1,8 +1,5 @@
-function [freqs] = music(x, nsignals, nbins)
-%MUSIC algorithm for sinusoid parameter estimation
-%x - signal corrupted with white noise
-%nsignals - number of real sinusoids in signal
-%nbins - number of bins in search space
+function [freqs] = fast_music(x, nsignals, nbins)
+%Replace eigenvalue decomposition in MUSIC with FFT
 
 N = length(x);
 %estimate autocorrelation function
@@ -19,26 +16,32 @@ M = find_periodicity(R,0.05);
 if(M < 1)
     M = N;
 end
-%get autocorrelation matrix
-%method 1
-%[corr, Rx] = corrmtx(x, M-1);
-%method 2
-Rx = toeplitz(R(1:M));
+R = R(1:M);
 
-%get eigenvalues
-[eig_vec, eig_vals] = eig(Rx);
-[eig_vals_sorted, inds] = sort(abs(diag(eig_vals)),'descend');
+% %since we know for order M, autocorrelation matrix will be circulant - 
+% %no need to do explicit eigenvalue decomposition, just multiply 
+% %autocorrelation function DFT matrix
+% dftm = dftmtx(M);
+% eigvals = dftm * R';
+
+%direct multiplication with DFT matrix is more expensive than doing
+%eigenvalue decomposition if M is large - reduce computation time by using
+%FFT
+%M = 2^nextpow2(M);
+%R_fft = [zeros(1,(M-length(R))/2), R, zeros(1,(M-length(R))/2)];
+%use fft to reduce computation
+eigvals = fft(R, M);
+[eig_vals_sorted, inds] = sort(abs(eigvals),'descend');
 
 % figure;
 % stem(1:M, eig_vals_sorted);hold off;
 % title('Sorted eigenvalues');
 
-%nsignals = determine_number_of_sinusoids(eig_vals_sorted, max_signals);
-%twice the number of real sinusoids
 p = 2*nsignals;
 noise_eigvals_pos = inds(p+1:M);
 %eigenvectors spanning noise subspace
-noise_eigvec = eig_vec(:,noise_eigvals_pos);
+%noise_eigvec = 1/sqrt(M) .* dftm(:,noise_eigvals_pos);
+noise_eigvec = exp(2*pi*1i*(0:M-1)'*(noise_eigvals_pos-1)/M);
 
 omega = linspace(-pi,pi,nbins);
 omega = omega(1:end-1);
@@ -58,10 +61,7 @@ end
 % plot(freqs/pi, peaks, '*');hold off;grid on;
 % ylabel('Pseudospectrum');
 % xlabel('Frequency in radians normalized by pi');
-% title('MUSIC');
-
+% title('Fast MUSIC');
 
 end
-
-
 

@@ -14,9 +14,9 @@ for n = tau_min:tau_max
     D(n-tau_min+1) = D(n-tau_min+1)/L;
 end
 
-figure;
-plot(tau_min:tau_max, D);grid on;
-xlabel('Lags in samples');ylabel('AMDF function');
+% figure;
+% plot(tau_min:tau_max, D);grid on;
+% xlabel('Lags in samples');ylabel('AMDF function');
 
 local_minima = zeros(length(D),2);
 k = 1;

@@ -1,6 +1,6 @@
 %Script to test MUSIC algorithm
 
-close all,clear all, clc;
+close all,clc;
 n = 0:1999;
 %clean signal
 %example 1
@@ -13,17 +13,11 @@ snr = 10;
 %signal+noise
 x = awgn(y_norm, snr);
 
+
 %frequencies detected by MUSIC
-% freqs = music(x, 2, 1000);
-% freqs/pi
+%freqs = music(x, 2, 1000);
+%freqs/pi
 
 %frequencies detected by fast_MUSIC
-% freqs_fast = fast_music(x,2,1000);
-% freqs_fast/pi
-
-%let's time computation speeds
-f1 = @()music(x,2,1000);
-t1 = timeit(f1)
-
-f2 = @()fast_music(x,2,1000);
-t2 = timeit(f2)
+freqs_fast = music(x,2,1000);
+freqs_fast/pi

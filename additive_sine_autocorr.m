@@ -121,8 +121,8 @@ mse_est = mean(abs((sort(abs(diag(eigval_R)) - sort(abs(eigval_R_est_dft))))).^2
 pos = determine_number_of_sinusoids(eig_sort, 5);
 top_eigvals = eig_sort(1:2*pos);
 top_eigvals_pos = inds(1:2*pos);
-%eigenvectors are corresponding rows in DFT matrix
-eigvec_top = dftm(top_eigvals_pos,:);
+%eigenvectors are corresponding columns in DFT matrix
+eigvec_top = dftm(:, top_eigvals_pos);
 %frequency resolution
 f_res = 2*pi/M;
 %frequency present in signal according to positions of top eigenvalues

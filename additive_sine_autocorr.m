@@ -23,11 +23,13 @@ figure;
 plot(n(1:200),x(1:200));
 xlabel('Samples');title('Signal+noise');
 
-%theoretical normalized autocorrelation
+%theoretical autocorrelation
 %example 1
-%R = (0.5*cos(n.*0.4*pi) + 0.125*cos(0.5*pi.*n) + 0.02*cos(0.6*pi.*n))./(max(abs(y))^2);
+%R = 0.5*cos(n.*0.4*pi) + 0.125*cos(0.5*pi.*n) + 0.02*cos(0.6*pi.*n);
 %example 2
-R = (0.5*cos(0.5*pi.*n) + 0.5*cos(0.52*pi.*n))./(max(abs(y))^2);
+R = 0.5*cos(0.5*pi.*n) + 0.5*cos(0.52*pi.*n);
+%normalize autocorrelation function
+R = R./(max(abs(y))^2);
 %compensating for additive white noise
 R(1) = R(1) + var_w;
 %find periodicity of autocorrelation function
@@ -75,10 +77,10 @@ title('Power spectrum');
 %get theoretical autocorrelation matrix
 auto_mat = toeplitz(R);
 %try with matlab's built-in function - this is not circulant
-%[corr_mat,auto_mat_est] = corrmtx(x, M-1);
+[corr_mat,auto_mat_est] = corrmtx(x, M-1);
 %try converting estimated autocorrelation function to toeplitz - this is
 %not exactly circulant but is very close
-auto_mat_est = toeplitz(R_hat);
+%auto_mat_est = toeplitz(R_hat);
 % get eigenvalues of theoretical autocorrelation matrix
 [eigvec_R, eigval_R] = eig(auto_mat);
 %get DFT matrix
@@ -117,8 +119,8 @@ mse_est = mean(abs((sort(abs(diag(eigval_R)) - sort(abs(eigval_R_est_dft))))).^2
 %find eigenvectors corresponding to top eigenvalues
 [eig_sort, inds] = sort(abs(eigval_R_est_dft), 'descend');
 pos = determine_number_of_sinusoids(eig_sort, 5);
-top_eigvals = eig_sort(1:2*(pos-1));
-top_eigvals_pos = inds(1:2*(pos-1));
+top_eigvals = eig_sort(1:2*pos);
+top_eigvals_pos = inds(1:2*pos);
 %eigenvectors are corresponding rows in DFT matrix
 eigvec_top = dftm(top_eigvals_pos,:);
 %frequency resolution
@@ -127,3 +129,4 @@ f_res = 2*pi/M;
 f_detected = -pi + (top_eigvals_pos-1)*f_res;
 %frequency detected normalized by pi radians
 f_detected/pi 
+

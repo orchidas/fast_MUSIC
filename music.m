@@ -1,20 +1,28 @@
-function [freqs] = music(x, max_signals, nbins)
+function [freqs] = music(x, nsignals, nbins)
 %MUSIC algorithm for sinusoid parameter estimation
 %x - signal corrupted with white noise
-%max_signals - maximum number of sinusoids in signal
+%nsignals - number of real sinusoids in signal
 %nbins - number of bins in search space
 
 N = length(x);
-%number of sinusoids
+%estimate autocorrelation function
 R = estimate_autocorrelation_function(x, N);
+figure;
+plot(0:N-1,R);title('Autocorrelation function');
+xlabel('Lags');
+
 %M is the number of antenna, or the dimension of the autocorrelation matrix
 %in our case.
-M = find_periodicity(R,0.01);
+M = find_periodicity(R,0.05);
+%if signal is not periodic, or too short to be periodic
+if(M < 1)
+    M = N;
+end
 %get autocorrelation matrix
 %method 1
-[corr, Rx] = corrmtx(x, M-1);
+%[corr, Rx] = corrmtx(x, M-1);
 %method 2
-%Rx = toeplitz(R(1:M));
+Rx = toeplitz(R(1:M));
 
 %get eigenvalues
 [eig_vec, eig_vals] = eig(Rx);
@@ -23,7 +31,7 @@ M = find_periodicity(R,0.01);
 figure;
 stem(1:M, eig_vals_sorted);title('Sorted eigenvalues');
 
-nsignals = determine_number_of_sinusoids(eig_vals_sorted, max_signals);
+%nsignals = determine_number_of_sinusoids(eig_vals_sorted, max_signals);
 %twice the number of real sinusoids
 p = 2*nsignals;
 noise_eigvals_pos = inds(p+1:M);

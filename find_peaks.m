@@ -24,16 +24,17 @@ freqs = zeros(size(peaks));
 %-- Do parabolic interpolation in dB magnitude to find more accurate peak --%
 %-- and frequency estimates --%
 
+%freqs = inds;
 for i=1:maxPeaks
-%idx=find(Xwdb==peaks(i));
-idx = inds(i);
-%parabolic interpolation
-a=Xwdb(idx-1);
-b=Xwdb(idx);
-c=Xwdb(idx+1);
-p = 0.5*((a-c)/(a+c-2*b));
-peaks(i) = b - (0.25*(a-c)*p);
-freqs(i) = (idx + p); %in bins
+    %idx=find(Xwdb==peaks(i));
+    idx = inds(i);
+    %parabolic interpolation
+    a=Xwdb(idx-1);
+    b=Xwdb(idx);
+    c=Xwdb(idx+1);
+    p = 0.5*((a-c)/(a+c-2*b));
+    peaks(i) = b - (0.25*(a-c)*p);
+    freqs(i) = (idx + p); %in bins
 end
 freqs = -pi + (freqs-1)*(2*pi/length(Xwdb));
 

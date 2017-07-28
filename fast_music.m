@@ -16,7 +16,6 @@ M = find_periodicity(R,0.05);
 if(M < 1)
     M = N;
 end
-R = R(1:M);
 
 % %since we know for order M, autocorrelation matrix will be circulant - 
 % %no need to do explicit eigenvalue decomposition, just multiply 
@@ -28,9 +27,8 @@ R = R(1:M);
 %eigenvalue decomposition if M is large - reduce computation time by using
 %FFT
 %M = 2^nextpow2(M);
-%R_fft = [zeros(1,(M-length(R))/2), R, zeros(1,(M-length(R))/2)];
 %use fft to reduce computation
-eigvals = fft(R, M);
+eigvals = fft(R(1:M), M);
 [eig_vals_sorted, inds] = sort(abs(eigvals),'descend');
 
 % figure;

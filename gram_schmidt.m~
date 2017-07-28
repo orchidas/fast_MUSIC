@@ -1,0 +1,23 @@
+function [Q,R] = gram_schmidt(A)
+%QR factorization with gram schmidt orthogonalization
+%Q - matrix with orthonormal vectors along the column
+%R = upper triangular matrix
+N = length(A);
+Q = zeros(N,N);
+R = zeros(N,N);
+u = A(:,1);
+
+for k = 1:N
+    Q(:,k) = u./norm(u);
+    u = A(:,k);
+    for j = 1:k-1
+        u = u - (u.'*Q(:,j))*Q(:,j);
+    end
+    R(k,k:N) = Q(:,k).'*A(:,k:N);
+end
+
+        
+
+
+end
+

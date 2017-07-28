@@ -1,0 +1,4 @@
+%script to test eigenvalue decomposition algorithm
+D = diag(1:10);
+rand('seed',36);
+S = rand(10); S = (S-0.5)*2;

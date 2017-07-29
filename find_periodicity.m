@@ -26,19 +26,22 @@ minPos = -1;
         local_minima(k,1) = i-1;
         local_minima(k,2) = D(i);
         k = k+1;
-        %minPos = i-1;
-        %break;
     end
  end
  
 local_minima = local_minima(1:k-1,:);
 
 %again find first minimum among all minima in AMDF
+%first local minima considerably smaller than others
+if(local_minima(1,2) < 0.5*mean(local_minima(:,2)))
+    minPos = local_minima(1,1);
+else
 for i = 2:k-2
     if(local_minima(i-1,2) > local_minima(i,2) && local_minima(i+1,2) > local_minima(i,2))
         minPos = local_minima(i,1);
         break;
     end
+end
 end
   
 period = round(minPos);

@@ -1,12 +1,18 @@
-function [freqs] = music(x, nsignals, nbins)
+function [freqs] = music(x, nsignals, nbins, method_autocorr)
 %MUSIC algorithm for sinusoid parameter estimation
 %x - signal corrupted with white noise
 %nsignals - number of real sinusoids in signal
 %nbins - number of bins in search space
+%method_autocorr - method for calculating autocorrelation function, direct
+%or fft
+
+if nargin < 4
+    method_autocorr = 'direct';
+end
 
 N = length(x);
 %estimate autocorrelation function
-R = estimate_autocorrelation_function(x, N);
+R = estimate_autocorrelation_function(x, N/2, method_autocorr);
 
 %M is the number of antenna, or the dimension of the autocorrelation matrix
 %in our case.

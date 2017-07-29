@@ -19,15 +19,15 @@ if strcmp(method,'direct')
         end
         R_hat(k+1) = R_hat(k+1)/(n-k);
     end
-else
+elseif strcmp(method,'fft')
     L = 2*M-1;
-    L = 2^nextpow2(L);
-    R_hat = ifft(fft(data,L).*fft(fliplr(conj(data)),L));
-    R_hat = R_hat./M;
+    R_hat = fftshift(ifft(fft(data,L).*fft(fliplr(conj(data)),L)));
+    %filter out bias - remove triangular weighting
+    l = -(L-1)/2:L/2;
+    R_hat = R_hat./(L-abs(l));
     %since ACF is symmetric, preserve positive lags only
-    R_hat = R_hat(L/2+1:end);
-    M = L/2;   
-    %TO DO - need to get rid of tapering in ACF
+    R_hat = R_hat((L+1)/2:end);
+    M = (L+1)/2;   
     
 end
 

@@ -14,12 +14,12 @@ snr = 10;
 x = awgn(y_norm, snr);
 
 %frequencies detected by MUSIC
-freqs = music(x, 3, 500);
-freqs/pi
+freqs = music(x, 3, 500, 'fft');
+sort(freqs/pi)
 
 %frequencies detected by fast_MUSIC
-freqs_fast = fast_music(x,3,500);
-freqs_fast/pi
+freqs_fast = fast_music(x,3,500,'fft');
+sort(freqs_fast/pi)
 
 %let's time computation speeds
 % f1 = @()music(x,3,1000);

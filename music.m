@@ -7,7 +7,7 @@ function [freqs] = music(x, nsignals, nbins, method_autocorr)
 %or fft
 
 if nargin < 4
-    method_autocorr = 'direct';
+    method_autocorr = 'fft';
 end
 
 N = length(x);
@@ -55,12 +55,12 @@ end
 %frequency estimates
 [peaks,freqs] = find_peaks(abs(P),p);
 
-figure;
-plot(omega/pi, abs(P));hold on;grid on;
-plot(freqs/pi, peaks, '*');hold off;grid on;
-ylabel('Pseudospectrum');
-xlabel('Frequency in radians normalized by pi');
-title('MUSIC');
+% figure;
+% plot(omega/pi, abs(P));hold on;grid on;
+% plot(freqs/pi, peaks, '*');hold off;grid on;
+% ylabel('Pseudospectrum');
+% xlabel('Frequency in radians normalized by pi');
+% title('MUSIC');
 
 
 end

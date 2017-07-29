@@ -10,7 +10,7 @@ function [freqs] = fast_music(x, nsignals, nbins, method_eig, method_autocorr)
 if(nargin == 3)
     method_eig = 'fft';
 elseif nargin == 4
-    method_autocorr = 'direct';
+    method_autocorr = 'fft';
 end
 
 N = length(x);
@@ -65,11 +65,13 @@ noise_eigvals_pos = inds(p+1:M);
 
 
 if mod(nbins,2) == 0
-    k = -nbins/2+1:nbins/2;
+    f = -nbins/2+1:nbins/2;
+    k = 0:nbins/2-1;
 else
-    k = -(nbins-1)/2:(nbins-1)/2;
+    f = -(nbins-1)/2:(nbins-1)/2;
+    k = 0:(nbins-1)/2;
 end
-P = zeros(nbins,1);
+P = zeros(nbins/2,1);
 
 
 %alternative pseudospectrum estimate from closed-form solution
@@ -90,27 +92,37 @@ for m = 1:length(k);
 
     % vectorized code
     curn = noise_eigvals_pos-1;
-    curk = abs(k(m));
-    inds = find(curn*nbins == curk*M);
-    if(~isempty(inds))
-        P(m) =  M;
-        curn = noise_eigvals_pos([1:inds-1 inds+1:end])-1;
-    end
-    P(m) = P(m) +  (sum(abs(sin(pi.*(curk/nbins - curn/M)*M)./...
+    curk = k(m);
+%     inds = find(curn*nbins == curk*M);
+%     if(~isempty(inds))
+%         P(m) =  M;
+%         curn = noise_eigvals_pos([1:inds-1 inds+1:end])-1;
+%     end
+%     P(m) = P(m) +  (sum(abs(sin(pi.*(curk/nbins - curn/M)*M)./...
+%            sin(pi.*(curk/nbins - curn/M)))));
+%     P(m) = 1./P(m);
+    
+    P(m) = 1./(sum(abs(sin(pi.*(curk/nbins - curn/M)*M)./...
            sin(pi.*(curk/nbins - curn/M)))));
-    P(m) = 1./P(m);
+    if isnan(P(m))
+        P(m) = 1/M;
+    end
     
 end
 
+%since we know the spectrum is symmetric, we can only compute positive half
+%and repeat it
+P = [fliplr(P); P];
 %frequency estimates
 [peaks,freqs] = find_peaks(P,p);
 
-figure;
-plot(2*k/nbins, P);hold on;grid on;
-plot(freqs/pi, peaks, '*');hold off;grid on;
-ylabel('Pseudospectrum');
-xlabel('Frequency in radians normalized by pi');
-title('Fast MUSIC');
+
+% figure;
+% plot(2*f/nbins, P);hold on;grid on;
+% plot(freqs/pi, peaks, '*');hold off;grid on;
+% ylabel('Pseudospectrum');
+% xlabel('Frequency in radians normalized by pi');
+% title('Fast MUSIC');
 
 end
 

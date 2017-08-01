@@ -1,4 +1,5 @@
 function [freqs] = fast_music(x, nsignals, nbins, method_eig, method_autocorr)
+
 %Replace eigenvalue decomposition in MUSIC with FFT
 %x - signal
 %nsignals - number of real sinusoids in signal
@@ -25,14 +26,15 @@ if(M < 1)
     M = N;
 end
 
-% %since we know for order M, autocorrelation matrix will be circulant - 
-% %no need to do explicit eigenvalue decomposition, just multiply 
-% %autocorrelation function DFT matrix
+%since we know for order = M, autocorrelation matrix will be circulant - 
+%no need to do explicit eigenvalue decomposition, just multiply 
+%autocorrelation function with DFT matrix
 if strcmp(method_eig,'dft')
      dftm = dftmtx(M);
      eigvals = dftm * R';
 %direct multiplication with DFT matrix is expensive -- 
 %reduce computation time by using FFT
+
 else
     eigvals = fft(R(1:M), M);
 end
@@ -115,7 +117,6 @@ end
 P = [fliplr(P); P];
 %frequency estimates
 [peaks,freqs] = find_peaks(P,p);
-
 
 % figure;
 % plot(2*f/nbins, P);hold on;grid on;

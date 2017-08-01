@@ -1,4 +1,5 @@
 function [freqs] = music(x, nsignals, nbins, method_autocorr)
+
 %MUSIC algorithm for sinusoid parameter estimation
 %x - signal corrupted with white noise
 %nsignals - number of real sinusoids in signal

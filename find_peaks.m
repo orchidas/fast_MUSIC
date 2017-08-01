@@ -1,4 +1,5 @@
 function [peaks,freqs] = find_peaks(Xwdb, maxPeaks)
+
 %finds peaks in signal/plot
 
 allPeaks = [];

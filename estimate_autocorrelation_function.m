@@ -1,4 +1,5 @@
 function [R_hat,M] = estimate_autocorrelation_function(data, nlags, method)
+
 %Unbiased estimation of autocorrelation function from data
 %nlags - number of lags for which to calculate R_hat
 %method - direct/fft

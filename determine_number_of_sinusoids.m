@@ -1,4 +1,5 @@
 function [num_sine] = determine_number_of_sinusoids(eigvals_sorted, max_signals)
+
 %determines number of sinusoids in signal from a list of sorted eigenvalues
 %eigvals_sorted - eigenvalues of autocorrelation matrix sorted in
 %descending order

@@ -1,4 +1,5 @@
 function [period] = find_periodicity(x, thresh)
+
 %finds periodicity in autocorrelation function using AMDF
 
 tau_min = 0;

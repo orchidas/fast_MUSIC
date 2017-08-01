@@ -13,6 +13,14 @@ snr = 10;
 %signal+noise
 x = awgn(y_norm, snr);
 
+%fast MUSIC
+freqs_fast = fast_music(x,3,500,'fft','fft');
+sort(freqs_fast/pi)
+
+%MUSIC
+freqs = music(x,3,500,'fft');
+sort(freqs/pi)
+
 %measuring computation speed and accuracy
 nbins = 50:100:1500;
 nsig = 3;

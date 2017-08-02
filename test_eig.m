@@ -1,26 +1,28 @@
 %script to test eigenvalue decomposition algorithm
-close all, clear all, clc;
+close all, clc;
 
-D = diag(1:10);
-rand('seed',36);
-S = rand(10); 
-S = (S-0.5)*2;
-A = S*D/S;
+% D = diag(1:10);
+% rand('seed',36);
+% S = rand(10); 
+% S = (S-0.5)*2;
+% A = S*D/S;
 
 %generate symmetric random matrix
-% rand('seed',36);
-% a = rand(5);
-% A = triu(a) + triu(a,1)';
+rand('seed',36);
+a = rand(5);
+A = triu(a) + triu(a,1)';
 
-% %my function
-% H1 = hessenberg(A);
-% %matlab's built-in function
-% H2 = hess(A);
+
+%reduction to tridiagonal form
+% [H1,U1] = hessenberg(A,'sym');
+% %reduction to hessenberg form
+% [H2,U2] = hessenberg(A);
 % %error in computation
 % err_H = abs(H2 - H1);
+% err_U = abs(U2 - U1);
 
-[Q_e,D_e] = eig_decomp(A,200,'hess');
-[Q_c,D_c] = eig(A);
+[Q_e,D_e] = eig_decomp(A,'tridiag',50);
+[Q_c,D_c] = eig_decomp(A,'hess',200);
 
 %arrange eigenvalues and eigenvectors in order
 [vals_c,inds_c] = sort(diag(D_c), 'descend');

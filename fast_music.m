@@ -35,7 +35,6 @@ if strcmp(method_eig,'dft')
      eigvals = dftm * R';
 %direct multiplication with DFT matrix is expensive -- 
 %reduce computation time by using FFT
-
 else
     eigvals = fft(R, M);
 end
@@ -49,17 +48,13 @@ end
 p = 2*nsignals;
 noise_eigvals_pos = inds(p+1:M);
 
-if mod(nbins,2) == 0
-    f = -nbins/2+1:nbins/2;
-    k = 0:nbins/2-1;
-else
-    f = -(nbins-1)/2:(nbins-1)/2;
-    k = 0:(nbins-1)/2;
-end
+k = 0:nbins/2-1;
+%k = -nbins/2+1:nbins/2;
 P = zeros(nbins/2,1);
 
 %alternative pseudospectrum estimate from closed-form solution
 for m = 1:length(k);
+    
 %     for n = 1:length(noise_eigvals_pos)
 %         curn = noise_eigvals_pos(n)-1;
 %         %this is required to make the function symmetric
@@ -73,10 +68,8 @@ for m = 1:length(k);
 %         end
 %     end
 %     P(m) = 1/P(m);
-
-    % vectorized code
-    curn = noise_eigvals_pos-1;
-    curk = k(m);
+%
+%     %vectorized code
 %     inds = find(curn*nbins == curk*M);
 %     if(~isempty(inds))
 %         P(m) =  M;
@@ -85,28 +78,30 @@ for m = 1:length(k);
 %     P(m) = P(m) +  (sum(abs(sin(pi.*(curk/nbins - curn/M)*M)./...
 %            sin(pi.*(curk/nbins - curn/M)))));
 %     P(m) = 1./P(m);
-    
-    P(m) = 1./(sum(abs(sin(pi.*(curk/nbins - curn/M)*M)./...
+
+     curn = noise_eigvals_pos-1;
+     curk = k(m);
+     P(m) = 1./(sum(abs(sin(pi.*(curk/nbins - curn/M)*M)./...
            sin(pi.*(curk/nbins - curn/M)))));
     if isnan(P(m))
         P(m) = 1/M;
-    end
+    end  
     
 end
 
 %frequency estimates
 [peaks,freqs] = find_peaks(P,nsignals);
 freqs = (freqs-1)*(pi/length(P));
-%since we know that the spectrum of a real signal will be symmetric, we
-%can only compute one half and negate the frequencies
-freqs = [-freqs, freqs];
 
 % figure;
-% plot(2*f/nbins, P);hold on;grid on;
+% plot(2*k/nbins, P);hold on;grid on;
 % plot(freqs/pi, peaks, '*');hold off;grid on;
 % ylabel('Pseudospectrum');
 % xlabel('Frequency in radians normalized by pi');
 % title('Fast MUSIC');
+
+%since the signal is real, the spectrum will be symmetric
+freqs = [-freqs,freqs];
 
 end
 

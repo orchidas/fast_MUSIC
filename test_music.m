@@ -14,11 +14,11 @@ snr = 10;
 x = awgn(y_norm, snr);
 
 % %fast MUSIC
-% freqs_fast = fast_music(x,2,500,'fft','fft');
+% freqs_fast = fast_music(x,2,350,'fft','fft');
 % sort(freqs_fast/pi)
 % 
 % %MUSIC
-% freqs = music(x,2,500,'gram_schmidt','fft');
+% freqs = music(x,2,350,'hess','fft');
 % sort(freqs/pi)
 
 % %measuring computation speed and accuracy
@@ -28,55 +28,62 @@ nmethods = 5;
 M = 100;
 t = zeros(length(nbins), nmethods);
 err = zeros(length(nbins),nmethods);
+freqs = zeros(length(nbins), nmethods, 2*nsig);
 %sig_freqs = [-0.6, -0.5, -0.4, 0.4, 0.5, 0.6];
 sig_freqs = [-0.52,-0.5,0.5,0.52];
+f = zeros(1,2*nsig);
 
 %frequencies detected by MUSIC with basic QR
 for n = 1:length(nbins)
     tic;
-    freqs = music(x, nsig, nbins(n), 'gram_schmidt','fft');
+    freqs(n,1,:) = music(x, nsig, nbins(n), 'gram_schmidt','fft');
     t(n,1) = toc;
-    err(n,1) = norm(sort(freqs/pi) - sig_freqs);
+    f(1,:) = freqs(n,1,:);
+    err(n,1) = norm(sort(f/pi) - sig_freqs);
 end
 
 %this is needed so all variables used by the function are cleared
-clearvars -except x nbins nsig nmethods t err sig_freqs snr M
+clearvars -except x nbins nsig nmethods t err sig_freqs snr M freqs f
 
 %frequencies detected by MUSIC with hessenberg QR 
 for n = 1:length(nbins)
     tic;
-    freqs = music(x, nsig, nbins(n), 'hess','fft');
+    freqs(n,2,:) = music(x, nsig, nbins(n), 'hess','fft');
     t(n,2) = toc;
-    err(n,2) = norm(sort(freqs/pi) - sig_freqs);
+    f(1,:) = freqs(n,2,:);
+    err(n,2) = norm(sort(f/pi) - sig_freqs);
 end
 
-clearvars -except x nbins nsig nmethods t err sig_freqs snr M
+clearvars -except x nbins nsig nmethods t err sig_freqs snr M freqs f
 
 for n = 1:length(nbins)
     tic;
-    freqs = music(x, nsig, nbins(n), 'tridiag','fft');
+    freqs(n,3,:) = music(x, nsig, nbins(n), 'implicit','fft');
     t(n,3) = toc;
-    err(n,3) = norm(sort(freqs/pi) - sig_freqs);
+    f(1,:) = freqs(n,3,:);
+    err(n,3) = norm(sort(f/pi) - sig_freqs);
 end
 
-clearvars -except x nbins nsig nmethods t err sig_freqs snr M 
+clearvars -except x nbins nsig nmethods t err sig_freqs snr M freqs f
 
 %frequencies detected by fast_MUSIC with fft
 for n = 1:length(nbins)
     tic;
-    freqs_fast = fast_music(x, nsig, nbins(n), 'fft', 'fft');
+    freqs(n,4,:) = fast_music(x, nsig, nbins(n), 'fft', 'fft');
     t(n,4) = toc;
-    err(n,4) = norm(sort(freqs_fast/pi) - sig_freqs);
+    f(1,:) = freqs(n,4,:);
+    err(n,4) = norm(sort(f/pi) - sig_freqs);
 end
 
-clearvars -except x nbins nsig nmethods t err sig_freqs snr M
+clearvars -except x nbins nsig nmethods t err sig_freqs snr M freqs f
 
 %frequencies detected by fast_MUSIC with dft
 for n = 1:length(nbins)
     tic;
-    freqs_fast = fast_music(x, nsig, nbins(n), 'dft', 'fft');
+    freqs(n,5,:) = fast_music(x, nsig, nbins(n), 'dft', 'fft');
     t(n,5) = toc;
-    err(n,5) = norm(sort(freqs_fast/pi) - sig_freqs);
+    f(1,:) = freqs(n,5,:);
+    err(n,5) = norm(sort(f/pi) - sig_freqs);
 end
 
 

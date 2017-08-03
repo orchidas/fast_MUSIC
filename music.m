@@ -26,7 +26,6 @@ if(M < 1)
     M = N;
 end
 %get autocorrelation matrix
-%method 2
 Rx = toeplitz(R(1:M));
 
 %get eigenvalues
@@ -37,11 +36,11 @@ if strcmp(method_eig,'default')
 else
     %not all methods need same no of iterations to converge
     if strcmp(method_eig,'gram_schmidt')
-        niter = 100;
+        niter = 50;
     elseif strcmp(method_eig,'hess')
-        niter = 100;
+        niter = 30;
     else
-        niter = 100;
+        niter = 30;
     end
     [eig_vec,eig_vals] = eig_decomp(Rx,method_eig,niter);
 end
@@ -52,7 +51,6 @@ end
 % stem(1:M, eig_vals_sorted);hold off;
 % title('Sorted eigenvalues');
 
-%nsignals = determine_number_of_sinusoids(eig_vals_sorted, max_signals);
 %twice the number of real sinusoids
 p = 2*nsignals;
 noise_eigvals_pos = inds(p+1:M);
@@ -60,7 +58,7 @@ noise_eigvals_pos = inds(p+1:M);
 noise_eigvec = eig_vec(:,noise_eigvals_pos);
 noise_subspace = noise_eigvec*noise_eigvec';
 
-omega = linspace(-pi,pi,nbins);
+omega = linspace(0,pi,nbins);
 k = 0:M-1;
 P = zeros(length(omega),1);
 
@@ -70,8 +68,8 @@ for n = 1:length(omega);
     P(n) = 1/(a'*noise_subspace*a);
 end
 %frequency estimates
-[peaks,freqs] = find_peaks(abs(P),p);
-freqs = -pi + (freqs-1)*(2*pi/length(P));
+[peaks,freqs] = find_peaks(abs(P),nsignals);
+freqs = (freqs-1)*(pi/length(P));
 
 % figure;
 % plot(omega/pi, abs(P));hold on;grid on;
@@ -79,6 +77,9 @@ freqs = -pi + (freqs-1)*(2*pi/length(P));
 % ylabel('Pseudospectrum');
 % xlabel('Frequency in radians normalized by pi');
 % title('MUSIC');
+
+%since the signal is real, spectrum will be symmetric
+freqs = [-freqs, freqs];
 
 
 end

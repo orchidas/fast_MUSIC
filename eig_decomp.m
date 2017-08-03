@@ -33,7 +33,7 @@ if (strcmp(method,'gram_schmidt'))
     V = U;
     
 elseif(strcmp(method,'hess'))
-        [H,U] = hessenberg(A);
+        [H,U] = hessenberg(A,'sym');
         c = zeros(n-1,1);
         s = zeros(n-1,1);
         for i = 1:niter
@@ -53,7 +53,7 @@ elseif(strcmp(method,'hess'))
         V = U;
         D = diag(diag(H));
         
-elseif (strcmp(method,'tridiag'))
+elseif (strcmp(method,'implicit'))
     
     %get tridiagonal matrix
     [T,U] = hessenberg(A,'sym');

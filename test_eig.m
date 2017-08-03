@@ -1,5 +1,5 @@
 %script to test eigenvalue decomposition algorithm
-close all, clc;
+close all, clear all, clc;
 
 % D = diag(1:10);
 % rand('seed',36);
@@ -9,9 +9,8 @@ close all, clc;
 
 %generate symmetric random matrix
 rand('seed',36);
-a = rand(5);
+a = rand(10);
 A = triu(a) + triu(a,1)';
-
 
 %reduction to tridiagonal form
 % [H1,U1] = hessenberg(A,'sym');

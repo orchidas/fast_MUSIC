@@ -25,6 +25,7 @@ M = find_periodicity(R,0.05);
 if(M < 1)
     M = N;
 end
+R = R(1:M);
 
 %since we know for order = M, autocorrelation matrix will be circulant - 
 %no need to do explicit eigenvalue decomposition, just multiply 
@@ -36,7 +37,7 @@ if strcmp(method_eig,'dft')
 %reduce computation time by using FFT
 
 else
-    eigvals = fft(R(1:M), M);
+    eigvals = fft(R, M);
 end
 
 [eig_vals_sorted, inds] = sort(abs(eigvals),'descend');
@@ -48,24 +49,6 @@ end
 p = 2*nsignals;
 noise_eigvals_pos = inds(p+1:M);
 
-%eigenvectors spanning noise subspace
-% if(strcmp(method, 'dft'))
-%     noise_eigvec = 1/sqrt(M) .* dftm(:,noise_eigvals_pos);
-% else
-%     noise_eigvec = exp(2*pi*1i*(0:M-1)'*(noise_eigvals_pos-1)/M);
-% end
-% noise_subspace = noise_eigvec*noise_eigvec';
-%
-% omega = linspace(-pi,pi,nbins);
-% P = zeros(length(omega),1);
-% k = 0:M-1;
-% for n = 1:length(omega);
-%     a = exp(1i*omega(n).*k');
-%     %pseudospectrum estimation
-%     P(n) = 1/(a'*noise_subspace*a);
-% end
-
-
 if mod(nbins,2) == 0
     f = -nbins/2+1:nbins/2;
     k = 0:nbins/2-1;
@@ -74,7 +57,6 @@ else
     k = 0:(nbins-1)/2;
 end
 P = zeros(nbins/2,1);
-
 
 %alternative pseudospectrum estimate from closed-form solution
 for m = 1:length(k);
@@ -112,11 +94,12 @@ for m = 1:length(k);
     
 end
 
-%since we know the spectrum is symmetric, we can only compute positive half
-%and repeat it
-P = [fliplr(P); P];
 %frequency estimates
-[peaks,freqs] = find_peaks(P,p);
+[peaks,freqs] = find_peaks(P,nsignals);
+freqs = (freqs-1)*(pi/length(P));
+%since we know that the spectrum of a real signal will be symmetric, we
+%can only compute one half and negate the frequencies
+freqs = [-freqs, freqs];
 
 % figure;
 % plot(2*f/nbins, P);hold on;grid on;

@@ -1,4 +1,4 @@
-function [freqs] = music(x, nsignals, nbins, method_eig, method_autocorr)
+function [freqs] = music(x, nsignals, nbins, method_eig, method_autocorr,M)
 
 %MUSIC algorithm for sinusoid parameter estimation
 %x - signal corrupted with white noise
@@ -7,6 +7,8 @@ function [freqs] = music(x, nsignals, nbins, method_eig, method_autocorr)
 %method eig - algorithm for eigenvalue decomposition
 %method_autocorr - method for calculating autocorrelation function, direct
 %or fft
+%M - autocorrelation matrix order (ideally should be calcuated from ACF
+%periodicity, but included just for plotting accuracy vs M).
 
 if nargin == 3
     method_eig = 'default';
@@ -18,12 +20,14 @@ N = length(x);
 %estimate autocorrelation function
 R = estimate_autocorrelation_function(x, N/2, method_autocorr);
 
-%M is the number of antenna, or the dimension of the autocorrelation matrix
-%in our case.
-M = find_periodicity(R,0.05);
-%if signal is not periodic, or too short to be periodic
-if(M < 1)
-    M = N;
+if nargin == 5
+    %M is the number of antenna, or the dimension of the autocorrelation matrix
+    %in our case.
+    M = find_periodicity(R,0.05);
+    %if signal is not periodic, or too short to be periodic
+    if(M < 1)
+        M = N;
+    end
 end
 %get autocorrelation matrix
 Rx = toeplitz(R(1:M));

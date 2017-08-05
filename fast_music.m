@@ -1,4 +1,4 @@
-function [freqs] = fast_music(x, nsignals, nbins, method_eig, method_autocorr)
+function [freqs] = fast_music(x, nsignals, nbins, method_eig, method_autocorr,M)
 
 %Replace eigenvalue decomposition in MUSIC with FFT
 %x - signal
@@ -7,8 +7,10 @@ function [freqs] = fast_music(x, nsignals, nbins, method_eig, method_autocorr)
 %method_eig - calculate eigenvalues with dft or fft
 %method_autocorr - method for estimating autocorrelation function, direct
 %or fft
+%M - autocorrelation matrix order (ideally should be calcuated from ACF
+%periodicity, but included just for plotting accuracy vs M).
 
-if(nargin == 3)
+if nargin == 3
     method_eig = 'fft';
 elseif nargin == 4
     method_autocorr = 'fft';
@@ -20,10 +22,12 @@ R = estimate_autocorrelation_function(x, N/2, method_autocorr);
 
 %M is the number of antenna, or the dimension of the autocorrelation matrix
 %in our case.
-M = find_periodicity(R,0.05);
-%if signal is not periodic, or too short to be periodic
-if(M < 1)
-    M = N;
+if nargin == 5
+    M = find_periodicity(R,0.05);
+    %if signal is not periodic, or too short to be periodic
+    if(M < 1)
+        M = N;
+    end
 end
 R = R(1:M);
 
@@ -31,12 +35,12 @@ R = R(1:M);
 %no need to do explicit eigenvalue decomposition, just multiply 
 %autocorrelation function with DFT matrix
 if strcmp(method_eig,'dft')
-     dftm = dftmtx(M);
+     dftm = exp(-1j*2*pi/M*(0:M-1)'*(0:M-1));
      eigvals = dftm * R';
 %direct multiplication with DFT matrix is expensive -- 
 %reduce computation time by using FFT
 else
-    eigvals = fft(R, M);
+    eigvals = mixed_radix_fft(R', M);
 end
 
 [eig_vals_sorted, inds] = sort(abs(eigvals),'descend');

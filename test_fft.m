@@ -1,8 +1,8 @@
 %Script to test my fft function
 
-close all,clear all, clc;
+close all,clear all,clc;
 % fs = 1;
-% L = 100;
+% L = 20;
 % n = 0:L-1;
 % y = cos(0.4*pi.*n + 0.1*pi) + 0.5*cos(0.5*pi.*n+0.3*pi) + 0.2*cos(0.6*pi.*n);
 % %y = [1,zeros(1,L-1)];

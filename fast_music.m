@@ -73,11 +73,14 @@ for m = 1:length(k);
 %     end
 %     P(m) = 1/P(m);
 %
-%     %vectorized code
-%     inds = find(curn*nbins == curk*M);
-%     if(~isempty(inds))
+
+    %vectorized code
+%     curn = noise_eigvals_pos-1;
+%     curk = k(m);
+%     pos = find(curn*nbins == curk*M);
+%     if(~isempty(pos))
 %         P(m) =  M;
-%         curn = noise_eigvals_pos([1:inds-1 inds+1:end])-1;
+%         curn = noise_eigvals_pos([1:pos-1 pos+1:end])-1;
 %     end
 %     P(m) = P(m) +  (sum(abs(sin(pi.*(curk/nbins - curn/M)*M)./...
 %            sin(pi.*(curk/nbins - curn/M)))));
@@ -85,10 +88,10 @@ for m = 1:length(k);
 
      curn = noise_eigvals_pos-1;
      curk = k(m);
-     P(m) = 1./(sum(abs(sin(pi.*(curk/nbins - curn/M)*M)./...
-           sin(pi.*(curk/nbins - curn/M)))));
+     P(m) = M./(sum((abs(sin(pi.*(curk/nbins - curn/M)*M)./...
+           sin(pi.*(curk/nbins - curn/M)))).^2));
     if isnan(P(m))
-        P(m) = 1/M;
+        P(m) = 1/(M*(M-p));
     end  
     
 end
@@ -98,10 +101,10 @@ end
 freqs = (freqs-1)*(pi/length(P));
 
 % figure;
-% plot(2*k/nbins, P);hold on;grid on;
-% plot(freqs/pi, peaks, '*');hold off;grid on;
+% plot(k/nbins, P);hold on;grid on;
+% plot(freqs/(2*pi), peaks, '*');hold off;grid on;
 % ylabel('Pseudospectrum');
-% xlabel('Frequency in radians normalized by pi');
+% xlabel('Frequency in Hz');
 % title('Fast MUSIC');
 
 %since the signal is real, the spectrum will be symmetric

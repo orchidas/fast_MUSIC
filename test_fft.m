@@ -1,6 +1,6 @@
 %Script to test my fft function
 
-close all,clear all,clc;
+close all, clear all, clc;
 % fs = 1;
 % L = 20;
 % n = 0:L-1;
@@ -26,7 +26,8 @@ err = zeros(1,nL);
 
 for k = 1:nL
     n = 0:L(k)-1;
-    y = cos(0.4*pi.*n + 0.1*pi) + 0.5*cos(0.5*pi.*n+0.3*pi) + 0.2*cos(0.6*pi.*n);
+    %y = cos(0.4*pi.*n + 0.1*pi) + 0.5*cos(0.5*pi.*n+0.3*pi) + 0.2*cos(0.6*pi.*n);
+    y = cos(2*0.25*pi.*n) + cos(2*0.26*pi.*n + 0.25*pi);
     tic;
     Y_cor = fft(y',L(k));
     t(1,k) = toc;

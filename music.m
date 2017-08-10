@@ -76,10 +76,10 @@ end
 freqs = (freqs-1)*(pi/length(P));
 
 % figure;
-% plot(omega/pi, abs(P));hold on;grid on;
-% plot(freqs/pi, peaks, '*');hold off;grid on;
+% plot(omega/(2*pi), abs(P));hold on;grid on;
+% plot(freqs/(2*pi), peaks, '*');hold off;grid on;
 % ylabel('Pseudospectrum');
-% xlabel('Frequency in radians normalized by pi');
+% xlabel('Frequency in Hz');
 % title('MUSIC');
 
 %since the signal is real, spectrum will be symmetric

@@ -33,7 +33,7 @@ elseif strcmp(method,'fft')
 end
 
 % figure;
-% plot(0:M-1,R_hat);title('Autocorrelation function');
+% plot(R_hat);title('Autocorrelation function');
 % xlabel('Lags');
 
 

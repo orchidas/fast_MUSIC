@@ -11,6 +11,7 @@ A = x;
 
 %get prime factors of N
 ifax = factor(N);
+
 %need to have 4 and 6 as factors as well
 pos2 = find(ifax == 2);
 pos3 = find(ifax == 3);
@@ -28,6 +29,7 @@ for n = 1:2:length(pos2)-1
     ifax(pos2(n)) = ifax(pos2(n))*ifax(pos2(n+1));
     ifax(pos2(n+1)) = 0;
 end
+
 %final array of factors in ascending order including 4 and 6
 ifax = sort(ifax(ifax~=0));    
 nfax = length(ifax);

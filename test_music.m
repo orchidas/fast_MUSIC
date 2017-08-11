@@ -3,7 +3,7 @@
 close all,clear all, clc;
 
 %number of available data points
-N = 4000;
+N = 2000;
 n = 0:N-1;
 %clean signal
 %example 1

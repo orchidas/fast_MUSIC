@@ -1,7 +1,7 @@
 %Script to plot MSE vs SNR with CRB
-close all, clear all, clc;
+close all, clc;
 
-N = 2000;
+N = 1000;
 n = 0:N-1;
 %clean signal
 %example 1
@@ -32,9 +32,9 @@ for k = 1:length(snr)
     x = awgn(y_norm, snr(k));
     sigma_z = var(y_norm - x);
     %get CRB
-    bounds(:,k) = crb(nsig,N,theta,sigma_z);
+    bounds(:,k) = crb(nsig,N/2,theta,sigma_z);
     freqs_music = sort(music(x, nsig, nbins, 'default','fft'));
-    freqs_fmusic = sort(fast_music(x, nsig, nbins, 'fft', 'fft'));
+    freqs_fmusic = sort(fast_music(x, nsig, nbins, 'default', 'fft'));
     err_music(1,k) = (freqs_music(3) - sig_freqs(3))^2;
     err_fmusic(1,k) = (freqs_fmusic(3) - sig_freqs(3))^2;
     err_music(2,k) = (freqs_music(4) - sig_freqs(4))^2;

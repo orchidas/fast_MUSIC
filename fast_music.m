@@ -11,7 +11,7 @@ function [freqs] = fast_music(x, nsignals, nbins, method_eig, method_autocorr,M)
 %periodicity, but included just for plotting accuracy vs M).
 
 if nargin == 3
-    method_eig = 'fft';
+    method_eig = 'default';
 elseif nargin == 4
     method_autocorr = 'fft';
 end
@@ -43,11 +43,12 @@ if strcmp(method_eig,'dft')
 %direct multiplication with DFT matrix is expensive -- 
 %reduce computation time by using FFT
 
-else
-    %My FFT
-    %eigvals = mixed_radix_fft(R', M);
+elseif strcmp(method_eig, 'default')
     %Matlab's built-in FFT (much faster)
     eigvals = fft(R',M);
+else
+    %My FFT
+    eigvals = mixed_radix_fft(R', M);
 end
 
 [eig_vals_sorted, inds] = sort(abs(eigvals),'descend');

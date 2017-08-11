@@ -26,21 +26,28 @@ if nargin == 5
     M = find_periodicity(R,0.05);
     %if signal is not periodic, or too short to be periodic
     if(M < 1)
-        M = N;
+        M = N/2;
     end
 end
 R = R(1:M);
 
+
 %since we know for order = M, autocorrelation matrix will be circulant - 
 %no need to do explicit eigenvalue decomposition, just multiply 
 %autocorrelation function with DFT matrix
+
 if strcmp(method_eig,'dft')
      dftm = exp(-1j*2*pi/M*(0:M-1)'*(0:M-1));
      eigvals = dftm * R';
+     
 %direct multiplication with DFT matrix is expensive -- 
 %reduce computation time by using FFT
+
 else
-    eigvals = mixed_radix_fft(R', M);
+    %My FFT
+    %eigvals = mixed_radix_fft(R', M);
+    %Matlab's built-in FFT (much faster)
+    eigvals = fft(R',M);
 end
 
 [eig_vals_sorted, inds] = sort(abs(eigvals),'descend');
@@ -109,6 +116,8 @@ freqs = (freqs-1)*(pi/length(P));
 
 %since the signal is real, the spectrum will be symmetric
 freqs = [-freqs,freqs];
+pos_nan = find(isnan(freqs));
+freqs(pos_nan) = 0;
 
 end
 

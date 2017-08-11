@@ -11,7 +11,7 @@ function [bounds] = crb(p,N,theta,sigma_z)
 %bounds - array containing CRB for each parameter in theta
 
 M = zeros(3*p,3*p);
-bounds = zeros(1,3*p);
+bounds = zeros(3*p,1);
 n = 0:N-1;
 
 %construct the M matrix
@@ -31,7 +31,7 @@ for i = 1:3:3*p
 end
 
 M_inv = inv(M);
-for i = 1:p
+for i = 1:3:3*p
     %frequency bound
     bounds(i) = (sigma_z * M_inv(i,i))/(2*(2*pi*theta(i+1))^2);
     %amplitude bound

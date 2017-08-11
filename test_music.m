@@ -1,7 +1,10 @@
-%Script to test MUSIC algorithm
+%Script to test MUSIC and fast_MUSIC 
 
 close all,clear all, clc;
-n = 0:1999;
+
+%number of available data points
+N = 4000;
+n = 0:N-1;
 %clean signal
 %example 1
 %y = cos(2*0.4*pi.*n + 0.1*pi) + 0.5*cos(2*0.5*pi.*n+0.3*pi) + 0.2*cos(2*0.6*pi.*n);
@@ -9,18 +12,19 @@ n = 0:1999;
 y = cos(2*0.25*pi.*n) + cos(2*0.26*pi.*n + 0.25*pi);
 %example 3
 %y = cos(0.04.*n) + 0.5*cos(0.05.*n);
-%nornalize signal power to 0dB
+%normalize signal power to 0dB
 y_norm = y./max(abs(y));
 snr = 10;
 %signal+noise
 x = awgn(y_norm, snr);
 
-% %fast MUSIC
-% freqs_fast = fast_music(x,2,1000,'fft','fft');
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%fast MUSIC
+% freqs_fast = fast_music(x,2,500,'fft','fft');
 % sort(freqs_fast/(2*pi))
 % 
 % %MUSIC
-% freqs = music(x,2,1000,'hess','fft',200);
+% freqs = music(x,2,500,'hess','fft',200);
 % sort(freqs/(2*pi))
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -31,7 +35,7 @@ nbins = 500;
 nsig = 2;
 nmethods = 5;
 %M = 100;
-M = 50:150:1000;
+M = 50:150:500;
 L = length(M);
 t = zeros(L, nmethods);
 err = zeros(L,nmethods);
@@ -102,6 +106,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%plot computation time and MSE plots
 figure;
 for k = 1:nmethods
     %plot(nbins, t(:,k));hold on;grid on;
@@ -124,7 +129,7 @@ end
 hold off;
 %xlabel('Number of bins in search space');
 xlabel('Order of autocorrelation matrix');
-ylabel('Estimation error in Hz (log_{10})');
+ylabel('Mean squared error in Hz (log_{10})');
 legend('MUSIC basic QR','MUSIC hess QR','MUSIC implicit QR', ...
     'fast MUSIC fft','fast MUSIC dft');
 %title(strcat('Order of autocorrelation matrix =', num2str(M)));

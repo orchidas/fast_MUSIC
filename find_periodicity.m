@@ -4,6 +4,7 @@ function [period] = find_periodicity(x, thresh)
 
 tau_min = 0;
 tau_max = length(x)-1;
+period = -1;
 
 D = zeros(1,tau_max - tau_min + 1);
 L = length(x);
@@ -32,9 +33,14 @@ minPos = -1;
  
 local_minima = local_minima(1:k-1,:);
 
+if isempty(local_minima)
+    return;
+end
+
 %again find first minimum among all minima in AMDF
-%first local minima considerably smaller than others
-if(local_minima(1,2) < 0.5*mean(local_minima(:,2)))
+%first local minimaum considerably smaller than others
+if(local_minima(1,2) < 0.5*mean(local_minima(:,2)) && ...
+    local_minima(1,2) > 10)
     minPos = local_minima(1,1);
 else
 for i = 2:k-2

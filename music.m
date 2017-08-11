@@ -26,19 +26,21 @@ if nargin == 5
     M = find_periodicity(R,0.05);
     %if signal is not periodic, or too short to be periodic
     if(M < 1)
-        M = N;
+        M = N/2;
     end
 end
 %get autocorrelation matrix
 Rx = toeplitz(R(1:M));
 
 %get eigenvalues
+
 %matlab's built-in function
 if strcmp(method_eig,'default')
     [eig_vec, eig_vals] = eig(Rx);
+    
 %my eigen decomposition function
 else
-    %not all methods need same no of iterations to converge
+    %not all methods need same number of iterations to converge
     if strcmp(method_eig,'gram_schmidt')
         niter = 50;
     elseif strcmp(method_eig,'hess')
@@ -84,7 +86,6 @@ freqs = (freqs-1)*(pi/length(P));
 
 %since the signal is real, spectrum will be symmetric
 freqs = [-freqs, freqs];
-
 
 end
 

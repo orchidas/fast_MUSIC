@@ -28,6 +28,8 @@ elseif strcmp(method,'fft')
     R_hat = R_hat./(L-abs(l));
     %since ACF is symmetric, preserve positive lags only
     R_hat = R_hat((L+1)/2:end);
+    %remove noise variance from signal
+    R_hat(1) = mean(R_hat(2:end));
     M = (L+1)/2;   
     
 end

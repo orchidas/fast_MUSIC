@@ -1,17 +1,17 @@
 %Script to test MUSIC and fast_MUSIC 
 
-close all,clear all, clc;
+close all, clc;
 
 %number of available data points
-N = 3000;
+N = 2000;
 n = 0:N-1;
 %clean signal
 %example 1
 %y = cos(2*0.4*pi.*n + 0.1*pi) + 0.5*cos(2*0.5*pi.*n+0.3*pi) + 0.2*cos(2*0.6*pi.*n);
 %example 2
-y = cos(2*0.24*pi.*n) + 0.5*cos(2*0.26*pi.*n + 0.25*pi);
+%y = cos(2*0.24*pi.*n) + 0.5*cos(2*0.26*pi.*n + 0.25*pi);
 %example 3
-%y = cos(0.04.*n) + 0.5*cos(0.05.*n);
+y = cos(0.04.*n) + 0.5*cos(0.05.*n);
 %normalize signal power to 0dB
 y_norm = y./max(abs(y));
 snr = 10;
@@ -20,21 +20,23 @@ x = awgn(y_norm, snr);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %fast MUSIC
-% freqs_fast = fast_music(x,2,500,'fft','fft');
-% sort(freqs_fast/(2*pi))
-% 
-% %MUSIC
-% freqs = music(x,2,500,'hess','fft',200);
-% sort(freqs/(2*pi))
+freqs_fast = fast_music(x,2,2000,'fft','fft');
+sort(freqs_fast)
+
+%MUSIC
+freqs = music(x,2,500,'hess','fft',200);
+sort(freqs)
+
+%%QIFFT
+freqs = qifft(x,4096,'black',5,2);
+sort(freqs)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %measuring computation speed and accuracy
-%nbins = 50:50:500;
-nbins = 500;
+%nbins = 50:50:500;nbins = 500;
 nsig = 2;
 nmethods = 5;
-%M = 100;
 M = 50:150:1500;
 L = length(M);
 t = zeros(L, nmethods);

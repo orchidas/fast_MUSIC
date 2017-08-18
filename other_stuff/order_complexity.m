@@ -1,7 +1,7 @@
-close all,clear all, clc;
+close all, clc;
 
 %number of available data points
-N = 3000;
+N = 2000;
 k = 0:N-1;
 
 f0 = 0.24;
@@ -14,9 +14,7 @@ M = zeros(L,1);
 t = zeros(L, nmethods);
 err = zeros(L,nmethods);
 freqs = zeros(L, nmethods, 2*nsig);
-%sig_freqs = [-0.6, -0.5, -0.4, 0.4, 0.5, 0.6];
-sig_freqs = [-0.26,-0.24,0.24,0.26]*2*pi;
-
+sig_freqs = zeros(L, 2*nsig);
 f = zeros(1,2*nsig);
 snr = 10;
 x = zeros(L,N);
@@ -28,9 +26,9 @@ for n = 1:L
     y_norm = y./max(abs(y));
     %signal+noise
     x(n,:) = awgn(y_norm, snr);
-    R = estimate_autocorrelation_function(x, N/2, method_autocorr);
+    R = estimate_autocorrelation_function(x(n,:), N/2, 'fft');
     M(n) = find_periodicity(R,0.05);
-    sig_freqs = [-f1(n),f0,];
+    sig_freqs(n,:) = [-f1(n),f0,f0,f1(n)]*2*pi;
 end
 
 for n = 1:L
@@ -38,7 +36,7 @@ for n = 1:L
     freqs(n,1,:) = music(x(n,:), nsig, nbins, 'gram_schmidt','fft',M(n));
     t(n,1) = toc;
     f(1,:) = freqs(n,1,:);
-    err(n,1) = norm(sort(f) - sig_freqs);
+    err(n,1) = norm(sort(f) - sig_freqs(n,:));
 end
 
 %this is needed so all variables used by the function are cleared
@@ -50,7 +48,7 @@ for n = 1:L
     freqs(n,2,:) = music(x(n,:), nsig, nbins, 'hess','fft',M(n));
     t(n,2) = toc;
     f(1,:) = freqs(n,2,:);
-    err(n,2) = norm(sort(f) - sig_freqs);
+    err(n,2) = norm(sort(f) - sig_freqs(n,:));
 end
 
 clearvars -except x nbins nsig nmethods t err sig_freqs snr M freqs f L f1
@@ -60,7 +58,7 @@ for n = 1:L
     freqs(n,3,:) = music(x(n,:), nsig, nbins, 'implicit','fft',M(n));
     t(n,3) = toc;
     f(1,:) = freqs(n,3,:);
-    err(n,3) = norm(sort(f) - sig_freqs);
+    err(n,3) = norm(sort(f) - sig_freqs(n,:));
 end
 
 clearvars -except x nbins nsig nmethods t err sig_freqs snr M freqs f L f1
@@ -71,7 +69,7 @@ for n = 1:L
     freqs(n,4,:) = fast_music(x(n,:), nsig, nbins, 'fft', 'fft',M(n));
     t(n,4) = toc;
     f(1,:) = freqs(n,4,:);
-    err(n,4) = norm(sort(f) - sig_freqs);
+    err(n,4) = norm(sort(f) - sig_freqs(n,:));
 end
 
 clearvars -except x nbins nsig nmethods t err sig_freqs snr M freqs f L f1
@@ -83,7 +81,7 @@ for n = 1:L
     freqs(n,5,:) = fast_music(x(n,:), nsig, nbins, 'dft', 'fft',M(n));
     t(n,5) = toc;
     f(1,:) = freqs(n,5,:);
-    err(n,5) = norm(sort(f) - sig_freqs);
+    err(n,5) = norm(sort(f) - sig_freqs(n,:));
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

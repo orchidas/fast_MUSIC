@@ -20,18 +20,18 @@ if strcmp(method,'direct')
         end
         R_hat(k+1) = R_hat(k+1)/(n-k);
     end
+    
 elseif strcmp(method,'fft')
-    L = 2*M-1;
+    L = M-1;
     R_hat = fftshift(ifft(fft(data,L).*fft(fliplr(conj(data)),L)));
     %filter out bias - remove triangular weighting
-    l = -(L-1)/2:L/2;
+    l = -(L-1)/2:(L-1)/2;
     R_hat = R_hat./(L-abs(l));
+    %remove noise variance from signal - linear interpolation
+    R_hat((L+1)/2) = (R_hat((L-1)/2) + R_hat((L+1)/2+1))/2;
     %since ACF is symmetric, preserve positive lags only
-    R_hat = R_hat((L+1)/2:end);
-    %remove noise variance from signal
-    R_hat(1) = mean(R_hat(2:end));
-    M = (L+1)/2;   
-    
+%     R_hat = R_hat((L+1)/2:end);
+%     M = (L+1)/2;
 end
 
 % figure;

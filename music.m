@@ -18,7 +18,7 @@ end
 
 N = length(x);
 %estimate autocorrelation function
-R = estimate_autocorrelation_function(x, N/2, method_autocorr);
+R = estimate_autocorrelation_function(x, N, method_autocorr);
 
 if nargin == 5
     %M is the number of antenna, or the dimension of the autocorrelation matrix

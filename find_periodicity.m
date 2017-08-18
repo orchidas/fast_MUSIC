@@ -39,7 +39,7 @@ end
 
 %again find first minimum among all minima in AMDF
 %first local minimaum considerably smaller than others
-if(local_minima(1,2) < 0.5*mean(local_minima(:,2)) && ...
+if(local_minima(1,2) < mean(local_minima(:,2)) && ...
     local_minima(1,2) > 10)
     minPos = local_minima(1,1);
 else

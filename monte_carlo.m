@@ -1,14 +1,14 @@
 %Monte Carlo simulations to get MSE
 close all, clear all, clc;
 
-nsims = 100;
+nsims = 500;
 %uniformly sampled random phase between [-pi,pi]
 phi = -pi + 2*pi*rand(nsims,1);
-N = 2000;
+N = 1000;
 n = 0:N-1;
 nsig = 2;
 snr = -20:5:50;
-nbins = 2000;
+nbins = 1000;
 bounds = zeros(nsims,3*nsig);
 %crb is in Hz
 crb_bounds = zeros(3*nsig,length(snr));
@@ -24,9 +24,12 @@ mse_qifft = zeros(nsig,length(snr));
 %sig_freqs = [-0.26,-0.24,0.24,0.26]*2*pi;
 sig_freqs = [-0.05,-0.04,0.04,0.05];
 %sig_freqs = [-0.26,0.26]*2*pi;
+%sig_freqs = [-0.05,0.05];
+
 %theta = [0.24,1,0,0.26,0.5,0];
 theta = [0.04/(2*pi), 1, 0, 0.05/(2*pi), 0.5, 0];
-%theta = [0.26 1 0];
+%theta = [0.26,1,0];
+%theta = [0.05/(2*pi) 1 0];
 snr_s = zeros(nsig, length(snr));
 
 for k = 1:length(snr)
@@ -34,7 +37,9 @@ for k = 1:length(snr)
     sigma_z = 10^(-snr(k)/10);
     for l = 1:nsims
         %y = cos(2*0.24*pi.*n) + 0.5*cos(2*0.26*pi.*n + phi(l));
-        y = cos(0.04.*n) + 0.5*cos(0.05.*n + phi(1));
+        y = cos(0.04.*n) + 0.5*cos(0.05.*n + phi(l));
+        %y = cos(2*pi*0.26.*n + phi(l));
+        %y = cos(0.05.*n + phi(l));
         theta(end) = phi(l);
         y_norm = y./max(abs(y));
         x = awgn(y_norm, snr(k));
@@ -51,13 +56,16 @@ for k = 1:length(snr)
     
     for m = 1:nsig
         %total error in DFS bins
-        mse_music(m,k) = N*norm(err_music(:,m))/nsims;
-        mse_fmusic(m,k) = N*norm(err_fmusic(:,m))/nsims;
-        mse_qifft(m,k) = N*norm(err_qifft(:,m))/nsims;
+        %mse_music(m,k) = (N/(2*pi))*var(err_music(:,m));
+        mse_music(m,k) = mean(err_music(:,m).^2);
+        %mse_fmusic(m,k) = (N/(2*pi))*var(err_fmusic(:,m));
+        mse_fmusic(m,k) = mean(err_fmusic(:,m).^2);
+        %mse_qifft(m,k) = (N/(2*pi))*var(err_qifft(:,m));
+        mse_qifft(m,k) = mean(err_qifft(:,m).^2);
         %CRB in DFS bins - these bounds work if the spacing between 2
         %frequencies is 1.8 bins or more
         %spectrum SNR
-        snr_s(m,k) = N*(theta(3*(m-1)+2)^2)/(sigma_z);
+        %snr_s(m,k) = N*(theta(3*(m-1)+2)^2)/(sigma_z);
         %crb_bounds(m,k) = 1.5/(pi^2 * snr_s(m,k));
     end
     crb_bounds(:,k) = mean(bounds,1);
@@ -67,14 +75,26 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %plot MSE with CRB
 
+% for m = 1:nsig
+%     figure(m);
+%     %plot(10*log10(snr_s(m,:)), 10*log10(crb_bounds(3*(m-1)+1,:)*(N^2)+eps));grid on;hold on;
+%     plot(10*log10(snr_s(m,:)), 10*log10(crb_bounds(m,:)+eps));grid on;hold on;
+%     plot(10*log10(snr_s(m,:)), 10*log10(mse_music(m,:)+eps));grid on;hold on;
+%     plot(10*log10(snr_s(m,:)), 10*log10(mse_fmusic(m,:)+eps));grid on;hold on;
+%     plot(10*log10(snr_s(m,:)), 10*log10(mse_qifft(m,:)+eps));grid on;hold off;
+%     xlabel('Spectrum SNR in dB');ylabel('Mean squared error in bins (dB)');
+%     title(strcat('Frequency of sinusoid = ',num2str(sig_freqs(nsig+m)),'rad'));
+%     %axis([-20,80,-100,40]);
+%     legend('CRB','MUSIC','fast MUSIC','QIFFT');
+% end
+
 for m = 1:nsig
     figure(m);
-    plot(10*log10(snr_s(m,:)), log10(crb_bounds(3*(m-1)+1,:)*(N^2)+eps));grid on;hold on;
-    %plot(10*log10(snr_s(m,:)), log10(crb_bounds(m,:)+eps));grid on;hold on;
-    plot(10*log10(snr_s(m,:)), log10(mse_music(m,:)+eps));grid on;hold on;
-    plot(10*log10(snr_s(m,:)), log10(mse_fmusic(m,:)+eps));grid on;hold on;
-    plot(10*log10(snr_s(m,:)), log10(mse_qifft(m,:)+eps));grid on;hold off;
-    xlabel('Spectrum SNR in dB');ylabel('Root mean squared error in bins (loq_{10}');
+    plot(snr, 10*log10((crb_bounds(3*(m-1)+1,:))+eps));grid on;hold on;
+    plot(snr, 10*log10(mse_music(m,:)+eps));grid on;hold on;
+    plot(snr, 10*log10(mse_fmusic(m,:)+eps));grid on;hold on;
+    plot(snr, 10*log10(mse_qifft(m,:)+eps));grid on;hold off;
+    xlabel('SNR in dB');ylabel('Mean squared error (dB)');
     title(strcat('Frequency of sinusoid = ',num2str(sig_freqs(nsig+m)),'rad'));
     %axis([-20,80,-100,40]);
     legend('CRB','MUSIC','fast MUSIC','QIFFT');

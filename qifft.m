@@ -13,7 +13,7 @@ function [freqs] = qifft(x,N,win,zpf,npeaks)
 %window length
 M = round(N/zpf);
 w = zeros(M,1);
-freqs = zeros(npeaks,1);
+freqs = zeros(1,npeaks);
 
 if(strcmp(win,'rect'))
     w = ones(M,1);

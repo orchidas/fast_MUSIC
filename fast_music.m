@@ -46,9 +46,13 @@ if strcmp(method_eig,'dft')
 elseif strcmp(method_eig, 'default')
     %Matlab's built-in FFT (much faster)
     eigvals = fft(R',M);
-else
-    %My FFT
+elseif strcmp(method_eig,'mixed_radix')
+    %My mixed radix FFT
     eigvals = mixed_radix_fft(R', M);
+elseif strcmp(method_eig,'resample_split_radix')
+    %My resampled split radix fft
+    eigvals = resamp_splitradix_fft(R',2^nextpow2(M), M);
+    M = 2^nextpow2(M);
 end
 
 [eig_vals_sorted, inds] = sort(abs(eigvals),'descend');

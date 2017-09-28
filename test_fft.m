@@ -26,7 +26,7 @@ close all,clear all, clc;
 
 L = 50:100:3000;
 nL = length(L);
-t = zeros(3,nL);
+t = zeros(4,nL);
 err = zeros(1,nL);
 
 for k = 1:nL
@@ -39,21 +39,39 @@ for k = 1:nL
     Y_est =  mixed_radix_fft(y', L(k));
     t(2,k) = toc;
     tic;
+    Y_split = resamp_splitradix_fft(y',2^nextpow2(L(k)),L(k));
+    t(3,k) = toc;
+    tic;
     dft_mat = exp(-1j*2*pi/L(k)*(0:L(k)-1)'*(0:L(k)-1));
     Y_dft = dft_mat(L(k))*y';
-    t(3,k) = toc;
+    t(4,k) = toc;
     err(k) = norm(abs(Y_est) - abs(Y_cor));
+    
 end
 
 figure;
 plot(L, t(1,:));hold on;grid on;
 plot(L, t(2,:));hold on;grid on;
-plot(L, t(3,:));hold off;grid on;
+plot(L, t(3,:));hold on;grid on;
+plot(L, t(4,:));hold off;grid on;
 xlabel('Length of fft');ylabel('Time in seconds');
-legend('Matlab fft','My FFT', 'DFT');
+legend('Matlab fft','Mixed radix FFT', 'Resampled split radix FFT', 'DFT');
 title('FFT speed comparisons');
     
 figure;
 plot(L, log10(err));grid on;
 xlabel('Length of fft');ylabel('Error (log_{10})');
-title('Error between my fft and Matlab''s fft');
+title('Error between my mixed radix fft and Matlab''s fft');
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%let's look at correct and resampled fft plots to see what's going on
+%To do - fix this
+
+freqsycor = linspace(-0.5,0.5,length(Y_cor));
+fs = 2^nextpow2(L(k))/L(k);
+freqsysplit = linspace(-fs/2,fs/2,length(Y_split));
+figure(3);
+subplot(211);plot(freqsycor,abs(Y_cor));
+subplot(212);plot(freqsysplit,abs(Y_split));
+xlabel('Frequency in Hz');ylabel('Amplitude');
+

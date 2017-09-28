@@ -1,13 +1,13 @@
 %Monte Carlo simulations to get MSE
 close all, clear all, clc;
 
-nsims = 500;
+nsims = 100;
 %uniformly sampled random phase between [-pi,pi]
 phi = -pi + 2*pi*rand(nsims,1);
 N = 1000;
 n = 0:N-1;
 nsig = 2;
-snr = -20:5:50;
+snr = -20:10:100;
 nbins = 1000;
 bounds = zeros(nsims,3*nsig);
 %crb is in Hz
@@ -21,13 +21,13 @@ mse_music = zeros(nsig,length(snr));
 mse_fmusic = zeros(nsig,length(snr));
 mse_qifft = zeros(nsig,length(snr));
 %this is in radians
-%sig_freqs = [-0.26,-0.24,0.24,0.26]*2*pi;
-sig_freqs = [-0.05,-0.04,0.04,0.05];
+sig_freqs = [-0.26,-0.24,0.24,0.26]*2*pi;
+%sig_freqs = [-0.05,-0.04,0.04,0.05];
 %sig_freqs = [-0.26,0.26]*2*pi;
 %sig_freqs = [-0.05,0.05];
 
-%theta = [0.24,1,0,0.26,0.5,0];
-theta = [0.04/(2*pi), 1, 0, 0.05/(2*pi), 0.5, 0];
+theta = [0.24,1,0,0.26,0.5,0];
+%theta = [0.04/(2*pi), 1, 0, 0.05/(2*pi), 0.5, 0];
 %theta = [0.26,1,0];
 %theta = [0.05/(2*pi) 1 0];
 snr_s = zeros(nsig, length(snr));
@@ -36,15 +36,15 @@ for k = 1:length(snr)
     
     sigma_z = 10^(-snr(k)/10);
     for l = 1:nsims
-        %y = cos(2*0.24*pi.*n) + 0.5*cos(2*0.26*pi.*n + phi(l));
-        y = cos(0.04.*n) + 0.5*cos(0.05.*n + phi(l));
+        y = cos(2*0.24*pi.*n) + 0.5*cos(2*0.26*pi.*n + phi(l));
+        %y = cos(0.04.*n) + 0.5*cos(0.05.*n + phi(l));
         %y = cos(2*pi*0.26.*n + phi(l));
         %y = cos(0.05.*n + phi(l));
         theta(end) = phi(l);
         y_norm = y./max(abs(y));
         x = awgn(y_norm, snr(k));
         bounds(l,:) = crb(nsig,N,theta,sigma_z);
-        freqs_music = sort(music(x, nsig, nbins, 'default','fft',200));
+        freqs_music = sort(music(x, nsig, nbins, 'default','fft',300));
         freqs_fmusic = sort(fast_music(x, nsig, nbins, 'default', 'fft'));
         freqs_qifft = sort(qifft(x,4096,'win',5,nsig));
         for m = 1:nsig
@@ -56,11 +56,11 @@ for k = 1:length(snr)
     
     for m = 1:nsig
         %total error in DFS bins
-        %mse_music(m,k) = (N/(2*pi))*var(err_music(:,m));
+        %mse_music(m,k) = var(err_music(:,m));
         mse_music(m,k) = mean(err_music(:,m).^2);
-        %mse_fmusic(m,k) = (N/(2*pi))*var(err_fmusic(:,m));
+        %mse_fmusic(m,k) = var(err_fmusic(:,m));
         mse_fmusic(m,k) = mean(err_fmusic(:,m).^2);
-        %mse_qifft(m,k) = (N/(2*pi))*var(err_qifft(:,m));
+        %mse_qifft(m,k) = var(err_qifft(:,m));
         mse_qifft(m,k) = mean(err_qifft(:,m).^2);
         %CRB in DFS bins - these bounds work if the spacing between 2
         %frequencies is 1.8 bins or more

@@ -20,11 +20,11 @@ x = awgn(y_norm, snr);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %fast MUSIC
-freqs_fast = fast_music(x,2,2000,'fft','fft');
+freqs_fast = fast_music(x,2,2000,'mixed_radix', 'fft');
 sort(freqs_fast)
 
 %MUSIC
-freqs = music(x,2,500,'hess','fft',200);
+freqs = music(x,2,2000,'hess','fft',200);
 sort(freqs)
 
 %%QIFFT
@@ -34,7 +34,8 @@ sort(freqs)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %measuring computation speed and accuracy
-%nbins = 50:50:500;nbins = 500;
+%nbins = 50:50:500;
+nbins = 500;
 nsig = 2;
 nmethods = 5;
 M = 50:150:1500;
@@ -87,7 +88,7 @@ clearvars -except x nbins nsig nmethods t err sig_freqs snr M freqs f L
 for n = 1:L
     tic;
     %freqs(n,4,:) = fast_music(x, nsig, nbins(n), 'fft', 'fft');
-    freqs(n,4,:) = fast_music(x, nsig, nbins, 'fft', 'fft',M(n));
+    freqs(n,4,:) = fast_music(x, nsig, nbins, 'mixed_radix', 'fft',M(n));
     t(n,4) = toc;
     f(1,:) = freqs(n,4,:);
     err(n,4) = norm(sort(f) - sig_freqs);

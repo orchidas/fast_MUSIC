@@ -1,18 +1,18 @@
-function [X] = resamp_splitradix_fft(x,N,P)
+function [X] = resamp_splitradix_fft(x,N,D)
 
 %Resample data so that it is periodic with a power of 2
 %and perform splitradix fft on it
 %x - data to be resampled
-%N - upsampling factor(power of 2)
-%P - downsampling factor (periodicity of signal)
+%N - required fft length (power of 2)
+%P - actual fft length
 
-
-x_resamp = resample(x,N,P);
+[P,Q] = rat(N/D);
+x_resamp = resample(x,P,Q);
 
 %splitradix fft (some of this code is taken from Ilias Konsoulas
 %"Sprint race for fast butterflies" Matlab package).
 X = zeros(1,N);
-X = split_radix(x_resamp,N);
+X = fftshift(split_radix(x_resamp,N));
 
     function [X] = split_radix(x,N)
         

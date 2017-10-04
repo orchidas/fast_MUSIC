@@ -53,10 +53,6 @@ end
 
 [eig_vals_sorted, inds] = sort(abs(diag(eig_vals)),'descend');
 
-% figure;
-% stem(1:M, eig_vals_sorted);hold off;
-% title('Sorted eigenvalues');
-
 %twice the number of real sinusoids
 p = 2*nsignals;
 noise_eigvals_pos = inds(p+1:M);
@@ -64,7 +60,7 @@ noise_eigvals_pos = inds(p+1:M);
 noise_eigvec = eig_vec(:,noise_eigvals_pos);
 noise_subspace = noise_eigvec*noise_eigvec';
 
-omega = linspace(0,pi,nbins);
+omega = linspace(-pi,pi,nbins);
 k = 0:M-1;
 P = zeros(length(omega),1);
 
@@ -74,8 +70,8 @@ for n = 1:length(omega)
     P(n) = 1/(a'*noise_subspace*a);
 end
 %frequency estimates
-[peaks,freqs] = find_peaks(abs(P),nsignals);
-freqs = (freqs-1)*(pi/length(P));
+[peaks,freqs] = find_peaks(abs(P),p);
+freqs = -pi + (freqs-1)*(2*pi/length(P));
 
 % figure;
 % plot(omega, abs(P));hold on;grid on;
@@ -84,8 +80,6 @@ freqs = (freqs-1)*(pi/length(P));
 % xlabel('Frequency in rad');
 % title('MUSIC');
 
-%since the signal is real, spectrum will be symmetric
-freqs = [-freqs, freqs];
 
 end
 

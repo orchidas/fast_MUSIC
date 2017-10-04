@@ -57,16 +57,12 @@ end
 
 [eig_vals_sorted, inds] = sort(abs(eigvals),'descend');
 
-% figure;
-% stem(1:M, eig_vals_sorted);hold off;
-% title('Sorted eigenvalues');
-
 p = 2*nsignals;
 noise_eigvals_pos = inds(p+1:M);
 
-k = 0:nbins/2-1;
-%k = -nbins/2+1:nbins/2;
-P = zeros(nbins/2,1);
+%k = 0:nbins/2-1;
+k = -nbins/2+1:nbins/2;
+P = zeros(nbins,1);
 
 %alternative pseudospectrum estimate from closed-form solution
 for m = 1:length(k)
@@ -109,20 +105,16 @@ for m = 1:length(k)
 end
 
 %frequency estimates
-[peaks,freqs] = find_peaks(P,nsignals);
-freqs = (freqs-1)*(pi/length(P));
+[peaks,freqs] = find_peaks(P,p);
+freqs = -pi + (freqs-1)*(2*pi/length(P));
 
-% figure;
-% plot(k*2*pi/nbins, P);hold on;grid on;
-% plot(freqs, peaks, '*');hold off;grid on;
-% ylabel('Pseudospectrum');
-% xlabel('Frequency in rad');
-% title('Fast MUSIC');
+figure;
+plot(k*2*pi/nbins, P);hold on;grid on;
+plot(freqs, peaks, '*');hold off;grid on;
+ylabel('Pseudospectrum');
+xlabel('Frequency in rad');
+title('Fast MUSIC');
 
-%since the signal is real, the spectrum will be symmetric
-freqs = [-freqs,freqs];
-pos_nan = find(isnan(freqs));
-freqs(pos_nan) = 0;
 
 end
 

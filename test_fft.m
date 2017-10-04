@@ -67,11 +67,11 @@ title('Error between my mixed radix fft and Matlab''s fft');
 %let's look at correct and resampled fft plots to see what's going on
 %This works with fftshift
 
-freqsycor = linspace(-0.5,0.5,length(Y_cor));
-fs = 2^nextpow2(L(k))/L(k);
-freqsysplit = linspace(-fs/2,fs/2,length(Y_split));
-figure(3);
-subplot(211);plot(freqsycor*2*pi,fftshift(abs(Y_cor)));
-subplot(212);plot(freqsysplit*2*pi, fftshift(abs(Y_split)));
-xlabel('Frequency in rad');ylabel('Amplitude');
+% freqsycor = linspace(-0.5,0.5,length(Y_cor));
+% fs = 2^nextpow2(L(k))/L(k);
+% freqsysplit = linspace(-fs/2,fs/2,length(Y_split));
+% figure(3);
+% subplot(211);plot(freqsycor*2*pi,fftshift(abs(Y_cor)));
+% subplot(212);plot(freqsysplit*2*pi, fftshift(abs(Y_split)));
+% xlabel('Frequency in rad');ylabel('Amplitude');
 

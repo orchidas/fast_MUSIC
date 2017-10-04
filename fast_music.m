@@ -69,7 +69,7 @@ k = 0:nbins/2-1;
 P = zeros(nbins/2,1);
 
 %alternative pseudospectrum estimate from closed-form solution
-for m = 1:length(k);
+for m = 1:length(k)
     
 %     for n = 1:length(noise_eigvals_pos)
 %         curn = noise_eigvals_pos(n)-1;
@@ -113,10 +113,10 @@ end
 freqs = (freqs-1)*(pi/length(P));
 
 % figure;
-% plot(k/nbins, P);hold on;grid on;
-% plot(freqs/(2*pi), peaks, '*');hold off;grid on;
+% plot(k*2*pi/nbins, P);hold on;grid on;
+% plot(freqs, peaks, '*');hold off;grid on;
 % ylabel('Pseudospectrum');
-% xlabel('Frequency in Hz');
+% xlabel('Frequency in rad');
 % title('Fast MUSIC');
 
 %since the signal is real, the spectrum will be symmetric

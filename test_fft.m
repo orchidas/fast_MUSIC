@@ -31,7 +31,7 @@ err = zeros(1,nL);
 
 for k = 1:nL
     n = 0:L(k)-1;
-    y = cos(2*0.24*pi.*n) + cos(2*0.26*pi.*n + 0.25*pi);
+    y = cos(0.05.*n) + cos(0.04.*n + 0.25*pi);
     tic;
     Y_cor = fft(y',L(k));
     t(1,k) = toc;
@@ -67,11 +67,11 @@ title('Error between my mixed radix fft and Matlab''s fft');
 %let's look at correct and resampled fft plots to see what's going on
 %This works with fftshift
 
-% freqsycor = linspace(-0.5,0.5,length(Y_cor));
-% fs = 2^nextpow2(L(k))/L(k);
-% freqsysplit = linspace(-fs/2,fs/2,length(Y_split));
-% figure(3);
-% subplot(211);plot(freqsycor,abs(Y_cor));
-% subplot(212);plot(freqsysplit, abs(Y_split));
-% xlabel('Frequency in Hz');ylabel('Amplitude');
+freqsycor = linspace(-0.5,0.5,length(Y_cor));
+fs = 2^nextpow2(L(k))/L(k);
+freqsysplit = linspace(-fs/2,fs/2,length(Y_split));
+figure(3);
+subplot(211);plot(freqsycor*2*pi,fftshift(abs(Y_cor)));
+subplot(212);plot(freqsysplit*2*pi, fftshift(abs(Y_split)));
+xlabel('Frequency in rad');ylabel('Amplitude');
 

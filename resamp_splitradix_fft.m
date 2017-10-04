@@ -12,7 +12,7 @@ x_resamp = resample(x,P,Q);
 %splitradix fft (some of this code is taken from Ilias Konsoulas
 %"Sprint race for fast butterflies" Matlab package).
 X = zeros(1,N);
-X = fftshift(split_radix(x_resamp,N));
+X = split_radix(x_resamp,N);
 
     function [X] = split_radix(x,N)
         

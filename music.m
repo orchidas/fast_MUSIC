@@ -68,7 +68,7 @@ omega = linspace(0,pi,nbins);
 k = 0:M-1;
 P = zeros(length(omega),1);
 
-for n = 1:length(omega);
+for n = 1:length(omega)
     a = exp(1i*omega(n).*k');
     %pseudospectrum estimation
     P(n) = 1/(a'*noise_subspace*a);
@@ -78,10 +78,10 @@ end
 freqs = (freqs-1)*(pi/length(P));
 
 % figure;
-% plot(omega/(2*pi), abs(P));hold on;grid on;
-% plot(freqs/(2*pi), peaks, '*');hold off;grid on;
+% plot(omega, abs(P));hold on;grid on;
+% plot(freqs, peaks, '*');hold off;grid on;
 % ylabel('Pseudospectrum');
-% xlabel('Frequency in Hz');
+% xlabel('Frequency in rad');
 % title('MUSIC');
 
 %since the signal is real, spectrum will be symmetric

@@ -1,9 +1,9 @@
 %Script to test MUSIC and fast_MUSIC 
 
-%close all, clc;
+%close all, clear all, clc;
 
 %number of available data points
-N = 2000;
+N = 4000;
 n = 0:N-1;
 %clean signal
 %example 1
@@ -19,17 +19,17 @@ snr = 10;
 x = awgn(y_norm, snr);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%fast MUSIC
-% freqs_fast = fast_music(x,2,2000,'mixed_radix', 'fft');
-% sort(freqs_fast)
-% 
-% %MUSIC
-% freqs = music(x,2,2000,'hess','fft',200);
-% sort(freqs)
-% 
-% %%QIFFT
-% freqs = qifft(x,4096,'black',5,2);
-% sort(freqs)
+%fast MUSIC - split radix does not work - see what's going on
+freqs_fast = fast_music(x,2,2000,'resample_split_radix', 'fft');
+sort(freqs_fast)
+
+%MUSIC
+freqs = music(x,2,2000,'hess','fft',200);
+sort(freqs)
+
+%%QIFFT
+freqs = qifft(x,4096,'black',5,2);
+sort(freqs)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -38,7 +38,7 @@ x = awgn(y_norm, snr);
 nbins = 500;
 nsig = 2;
 nmethods = 6;
-M = 50:150:2000;
+M = 50:250:1800;
 L = length(M);
 t = zeros(L, nmethods);
 err = zeros(L,nmethods);
@@ -125,7 +125,7 @@ xlabel('Order of autocorrelation matrix');
 %xlabel('Number of bins in search space');
 ylabel('Time in seconds (log)');
 legend('MUSIC basic QR','MUSIC hess QR','MUSIC implicit QR', ...
-    'fast MUSIC fft','fast MUSIC dft');
+    'fast MUSIC mixed radix fft','fast MUSIC resampled split radix fft','fast MUSIC dft');
 %title(strcat('Order of autocorrelation matrix =', num2str(M)));
 title(strcat('Number of bins in search space =', num2str(nbins)));
 

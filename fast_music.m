@@ -108,12 +108,12 @@ end
 [peaks,freqs] = find_peaks(P,p);
 freqs = -pi + (freqs-1)*(2*pi/length(P));
 
-figure;
-plot(k*2*pi/nbins, P);hold on;grid on;
-plot(freqs, peaks, '*');hold off;grid on;
-ylabel('Pseudospectrum');
-xlabel('Frequency in rad');
-title('Fast MUSIC');
+% figure;
+% plot(k*2*pi/nbins, P);hold on;grid on;
+% plot(freqs, peaks, '*');hold off;grid on;
+% ylabel('Pseudospectrum');
+% xlabel('Frequency in rad');
+% title('Fast MUSIC');
 
 
 end

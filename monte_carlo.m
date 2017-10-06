@@ -21,13 +21,13 @@ mse_music = zeros(nsig,length(snr));
 mse_fmusic = zeros(nsig,length(snr));
 mse_qifft = zeros(nsig,length(snr));
 %this is in radians
-sig_freqs = [-0.26,-0.24,0.24,0.26]*2*pi;
-%sig_freqs = [-0.05,-0.04,0.04,0.05];
+%sig_freqs = [-2.6,-2.4,2.4,2.6];
+sig_freqs = [-0.05,-0.04,0.04,0.05];
 %sig_freqs = [-0.26,0.26]*2*pi;
 %sig_freqs = [-0.05,0.05];
 
-theta = [0.24,1,0,0.26,0.5,0];
-%theta = [0.04/(2*pi), 1, 0, 0.05/(2*pi), 0.5, 0];
+%theta = [2.4/(2*pi),1,0,2.6/(2*pi),0.5,0];
+theta = [0.04/(2*pi), 1, 0, 0.05/(2*pi), 0.5, 0];
 %theta = [0.26,1,0];
 %theta = [0.05/(2*pi) 1 0];
 snr_s = zeros(nsig, length(snr));
@@ -36,8 +36,8 @@ for k = 1:length(snr)
     
     sigma_z = 10^(-snr(k)/10);
     for l = 1:nsims
-        y = cos(2*0.24*pi.*n) + 0.5*cos(2*0.26*pi.*n + phi(l));
-        %y = cos(0.04.*n) + 0.5*cos(0.05.*n + phi(l));
+        %y = cos(2.4.*n) + 0.5*cos(2.6.*n + phi(l));
+        y = cos(0.04.*n) + 0.5*cos(0.05.*n + phi(l));
         %y = cos(2*pi*0.26.*n + phi(l));
         %y = cos(0.05.*n + phi(l));
         theta(end) = phi(l);
@@ -90,14 +90,15 @@ end
 
 for m = 1:nsig
     figure(m);
-    plot(snr, 10*log10((crb_bounds(3*(m-1)+1,:))+eps));grid on;hold on;
-    plot(snr, 10*log10(mse_music(m,:)+eps));grid on;hold on;
-    plot(snr, 10*log10(mse_fmusic(m,:)+eps));grid on;hold on;
-    plot(snr, 10*log10(mse_qifft(m,:)+eps));grid on;hold off;
+    plot(snr, 10*log10((crb_bounds(3*(m-1)+1,:))+eps), '-s','MarkerSize',8);grid on;hold on;
+    plot(snr, 10*log10(mse_music(m,:)+eps),'-d','MarkerSize',8);grid on;hold on;
+    plot(snr, 10*log10(mse_fmusic(m,:)+eps),'-x','MarkerSize',8);grid on;hold on;
+    plot(snr, 10*log10(mse_qifft(m,:)+eps),'-v','MarkerSize',8);grid on;hold off;
     xlabel('SNR in dB');ylabel('Mean squared error (dB)');
-    title(strcat('Frequency of sinusoid = ',num2str(sig_freqs(nsig+m)),'rad'));
-    %axis([-20,80,-100,40]);
+    %title(strcat('Frequency of sinusoid = ',num2str(sig_freqs(nsig+m)),'rad'));
     legend('CRB','MUSIC','fast MUSIC','QIFFT');
+    %save figure as eps file
+    print(strcat('monte_carlo_',num2str(sig_freqs(nsig+m)),'rad'),'-deps');
 end
 
 

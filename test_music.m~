@@ -114,7 +114,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-markers = 'odv*xs';
+markers = 'od+*xs';
 %plot computation time and MSE plots
 figure;
 for k = 1:nmethods
@@ -135,7 +135,7 @@ title(strcat('Number of bins in search space =', num2str(nbins)));
 figure;
 for k = 1:nmethods
     %plot(nbins, log10(err(:,k)+eps));hold on;grid on;
-    p = plot(M, log10(err(:,k)+eps), strcat('-',markers(k)));hold on;grid on;
+    plot(M, log10(err(:,k)+eps), strcat('-',markers(k)));hold on;grid on;
     p.MarkerSize = 8;
 end
 hold off;

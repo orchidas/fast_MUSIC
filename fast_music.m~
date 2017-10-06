@@ -19,8 +19,7 @@ end
 N = length(x);
 %estimate autocorrelation function
 R = estimate_autocorrelation_function(x, N, method_autocorr);
-%resampling will shift the spectrum
-shift = 1;
+%res
 
 %M is the number of antenna, or the dimension of the autocorrelation matrix
 %in our case.
@@ -54,7 +53,6 @@ elseif strcmp(method_eig,'mixed_radix')
 elseif strcmp(method_eig,'resample_split_radix')
     %My resampled split radix fft
     eigvals = resamp_splitradix_fft(R',2^nextpow2(M), M);
-    %oversampling factor
     shift = 2^nextpow2(M)/M;
     M = 2^nextpow2(M);
 end
@@ -108,18 +106,16 @@ for m = 1:length(k)
     
 end
 
-%shift spectrum if resampled 
-P = P * shift;
 %frequency estimates
 [peaks,freqs] = find_peaks(P,p);
 freqs = -pi + (freqs-1)*(2*pi/length(P));
 
-% figure;
-% plot(k*2*pi/nbins, P);hold on;grid on;
-% plot(freqs, peaks, '*');hold off;grid on;
-% ylabel('Pseudospectrum');
-% xlabel('Frequency in rad');
-% title('Fast MUSIC');
+figure;
+plot(k*2*pi/nbins, P);hold on;grid on;
+plot(freqs, peaks, '*');hold off;grid on;
+ylabel('Pseudospectrum');
+xlabel('Frequency in rad');
+title('Fast MUSIC');
 
 
 end

@@ -6,6 +6,7 @@ allPeaks = [];
 indPos = [];
 k = 1;
 
+%find all local maxima
 for i=2:length(Xwdb)-1
     if(Xwdb(i) >= Xwdb(i-1) && Xwdb(i) >= Xwdb(i+1))
         allPeaks(k) = Xwdb(i);
@@ -25,7 +26,7 @@ end
 peaks = peaks(1:maxPeaks);
 inds = indPos(pos);
 inds = inds(1:maxPeaks);
-freqs = zeros(size(peaks));
+freqs = inds;
 
 %-- Do parabolic interpolation in dB magnitude to find more accurate peak --%
 %-- and frequency estimates --%

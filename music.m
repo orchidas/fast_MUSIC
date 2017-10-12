@@ -71,12 +71,13 @@ for n = 1:length(omega)
 end
 %frequency estimates
 [peaks,freqs] = find_peaks(abs(P),p);
-freqs = -pi + (freqs-1)*(2*pi/length(P));
+freqs = -pi + freqs*(2*pi/length(P));
 
 % figure;
 % plot(omega, abs(P));hold on;grid on;
 % plot(freqs, peaks, '*');hold off;grid on;
 % ylabel('Pseudospectrum');
+% %xlim([-0.15,0.15]);ylim([0,1.1*max(peaks)]);
 % xlabel('Frequency in rad');
 % title('MUSIC');
 

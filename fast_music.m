@@ -114,13 +114,13 @@ P = P * shift;
 [peaks,freqs] = find_peaks(P,p);
 freqs = -pi + freqs*(2*pi/length(P));
 
-figure;
-plot(k*2*pi/nbins, P);hold on;grid on;
-plot(freqs, peaks, '*');hold off;grid on;
-%xlim([-0.15,0.15]);ylim([0,1.1*max(peaks)]);
-ylabel('Pseudospectrum');
-xlabel('Frequency in rad');
-title('Fast MUSIC');
+% figure;
+% plot(k*2*pi/nbins, P);hold on;grid on;
+% plot(freqs, peaks, '*');hold off;grid on;
+% xlim([-0.15,0.15]);ylim([0,1.1*max(peaks)]);
+% ylabel('Pseudospectrum');
+% xlabel('Frequency in rad');
+% title('Fast MUSIC');
 
 
 end

@@ -77,7 +77,7 @@ freqs = -pi + freqs*(2*pi/length(P));
 % plot(omega, abs(P));hold on;grid on;
 % plot(freqs, peaks, '*');hold off;grid on;
 % ylabel('Pseudospectrum');
-% %xlim([-0.15,0.15]);ylim([0,1.1*max(peaks)]);
+% xlim([-0.15,0.15]);ylim([0,1.1*max(peaks)]);
 % xlabel('Frequency in rad');
 % title('MUSIC');
 

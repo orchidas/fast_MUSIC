@@ -1,7 +1,7 @@
 %Monte Carlo simulations to get MSE
-close all, clear all, clc;
+%close all, clear all, clc;
 
-nsims = 5;
+nsims = 1000;
 %uniformly sampled random phase between [-pi,pi]
 phi = -pi + 2*pi*rand(nsims,1);
 N = 1000;
@@ -46,9 +46,6 @@ for k = 1:length(snr)
         bounds(l,:) = crb(nsig,N,theta,sigma_z);
         freqs_music = sort(music(x, nsig, nbins, 'default','fft',300));
         freqs_fmusic = sort(fast_music(x, nsig, nbins, 'default', 'fft'));
-        if(isnan(freqs_fmusic))
-            freqs_fmusic
-        end
         freqs_qifft = sort(qifft(x,4096,'win',5,nsig));
         for m = 1:nsig
             err_music(l,m) = (freqs_music(nsig + m) - sig_freqs(nsig + m))/(2*pi);

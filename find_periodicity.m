@@ -38,7 +38,7 @@ if isempty(local_minima)
 end
 
 %again find first minimum among all minima in AMDF
-%first local minimaum considerably smaller than others
+%first local minimum considerably smaller than others
 if(local_minima(1,2) < mean(local_minima(:,2)) && ...
     local_minima(1,2) > 10)
     minPos = local_minima(1,1);
@@ -46,12 +46,17 @@ else
 for i = 2:k-2
     if(local_minima(i-1,2) > local_minima(i,2) && local_minima(i+1,2) > local_minima(i,2))
         minPos = local_minima(i,1);
-        break;
+        if minPos < 10
+            continue;
+        else
+            break;
+        end
     end
 end
 end
   
 period = round(minPos);
+
 
 end
 

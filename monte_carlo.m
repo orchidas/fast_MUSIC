@@ -1,13 +1,13 @@
 %Monte Carlo simulations to get MSE
 %close all, clear all, clc;
 
-nsims = 1000;
+nsims = 2000;
 %uniformly sampled random phase between [-pi,pi]
 phi = -pi + 2*pi*rand(nsims,1);
 N = 1000;
 n = 0:N-1;
 nsig = 2;
-snr = -20:10:100;
+snr = -20:2:60;
 nbins = 1000;
 bounds = zeros(nsims,3*nsig);
 %crb is in Hz
@@ -90,15 +90,19 @@ end
 
 for m = 1:nsig
     figure(m);
-    plot(snr, 10*log10((crb_bounds(3*(m-1)+1,:))+eps), '-s','MarkerSize',8);grid on;hold on;
-    plot(snr, 10*log10(mse_music(m,:)+eps),'-d','MarkerSize',8);grid on;hold on;
-    plot(snr, 10*log10(mse_fmusic(m,:)+eps),'-x','MarkerSize',8);grid on;hold on;
-    plot(snr, 10*log10(mse_qifft(m,:)+eps),'-v','MarkerSize',8);grid on;hold off;
+    plot(snr, 10*log10((crb_bounds(3*(m-1)+1,:))+eps), '-s','MarkerSize',8,...
+        'MarkerIndices',1:5:length(snr));grid on;hold on;
+    plot(snr, 10*log10(mse_music(m,:)+eps),'-d','MarkerSize',8,...
+        'MarkerIndices',1:5:length(snr));grid on;hold on;
+    plot(snr, 10*log10(mse_fmusic(m,:)+eps),'-x','MarkerSize',8,...
+        'MarkerIndices',1:5:length(snr));grid on;hold on;
+    plot(snr, 10*log10(mse_qifft(m,:)+eps),'-v','MarkerSize',8,...
+        'MarkerIndices',1:5:length(snr));grid on;hold off;
     xlabel('SNR in dB');ylabel('Mean squared error (dB)');
     %title(strcat('Frequency of sinusoid = ',num2str(sig_freqs(nsig+m)),'rad'));
     legend('CRB','MUSIC','fast MUSIC','QIFFT');
     %save figure as eps file
-    %print(strcat('monte_carlo_',num2str(sig_freqs(nsig+m)),'rad'),'-deps');
+    print(strcat('monte_carlo_',num2str(sig_freqs(nsig+m)),'rad'),'-deps');
 end
 
 

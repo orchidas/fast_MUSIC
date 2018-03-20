@@ -1,7 +1,8 @@
-function [freqs] = fast_music(x, nsignals, nbins, method_eig, method_autocorr,M)
+function [peaks,freqs] = fast_music(x, fs, nsignals, nbins, method_eig, method_autocorr,file,M)
 
 %Replace eigenvalue decomposition in MUSIC with FFT
 %x - signal
+%fs - sampling frequency, required for plotting pseudospectrum
 %nsignals - number of real sinusoids in signal
 %nbins - number of points in search space
 %method_eig - calculate eigenvalues with dft or fft
@@ -10,9 +11,9 @@ function [freqs] = fast_music(x, nsignals, nbins, method_eig, method_autocorr,M)
 %M - autocorrelation matrix order (ideally should be calcuated from ACF
 %periodicity, but included just for plotting accuracy vs M).
 
-if nargin == 3
+if nargin == 4
     method_eig = 'default';
-elseif nargin == 4
+elseif nargin == 5
     method_autocorr = 'fft';
 end
 
@@ -24,7 +25,7 @@ shift = 1;
 
 %M is the number of antenna, or the dimension of the autocorrelation matrix
 %in our case.
-if nargin == 5
+if nargin == 7
     M = find_periodicity(R,0.05);
     %if signal is not periodic, or too short to be periodic
     if(M < 1)
@@ -64,9 +65,9 @@ end
 p = 2*nsignals;
 noise_eigvals_pos = inds(p+1:M);
 
-%k = 0:nbins/2-1;
-k = -nbins/2+1:nbins/2;
-P = zeros(nbins,1);
+k = 0:nbins/2-1;
+%k = -nbins/2+1:nbins/2;
+P = zeros(nbins/2,1);
 
 %alternative pseudospectrum estimate from closed-form solution
 for m = 1:length(k)
@@ -84,7 +85,7 @@ for m = 1:length(k)
 %         end
 %     end
 %     P(m) = 1/P(m);
-%
+
 
     %vectorized code
 %     curn = noise_eigvals_pos-1;
@@ -111,16 +112,17 @@ end
 %shift spectrum if resampled 
 P = P * shift;
 %frequency estimates
-[peaks,freqs] = find_peaks(P,p);
-freqs = -pi + freqs*(2*pi/length(P));
-
-% figure;
-% plot(k*2*pi/nbins, P);hold on;grid on;
-% plot(freqs, peaks, '*');hold off;grid on;
-% xlim([-0.15,0.15]);ylim([0,1.1*max(peaks)]);
-% ylabel('Pseudospectrum');
-% xlabel('Frequency in rad');
-% title('Fast MUSIC');
+[peaks,freqs] = find_peaks(P,nsignals);
+freqs = (freqs-1)*(pi/length(P));
+ 
+h = figure;
+plot(k/(nbins/2) * (fs/2), P);hold on;grid on;
+plot(freqs/pi * (fs/2), peaks, '*');hold off;grid on;
+xlim([0,400]);ylim([0,1.1*max(peaks)]);
+ylabel('Pseudospectrum');
+xlabel('Frequency Hz');
+title(strcat('Fast MUSIC-', file));
+savefig(h,strcat('../piano data/A3/fmusic-',file,'.fig'));
 
 
 end

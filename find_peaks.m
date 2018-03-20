@@ -1,6 +1,9 @@
 function [peaks,freqs] = find_peaks(Xwdb, maxPeaks)
 
 %finds peaks in signal/plot
+%Xwdb - Y VALUES
+%maxPeaks - maximum number of peaks we are looking for
+
 
 allPeaks = [];
 indPos = [];
@@ -44,5 +47,4 @@ for i=1:maxPeaks
 end
 
 
-end
 

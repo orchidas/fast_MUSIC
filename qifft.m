@@ -1,4 +1,4 @@
-function [freqs] = qifft(x,N,win,zpf,npeaks)
+function [peaks,freqs] = qifft(x,fs,N,win,zpf,npeaks)
 %Quadratically Interpolated FFT (QIFFT)
 %method for estimating sinusoidal parameters from
 %peaks in spectral magnitude data
@@ -12,8 +12,8 @@ function [freqs] = qifft(x,N,win,zpf,npeaks)
 %length of fft
 %window length
 M = round(N/zpf);
-w = zeros(M,1);
 freqs = zeros(1,npeaks);
+peaks = zeros(1, npeaks);
 
 if(strcmp(win,'rect'))
     w = ones(M,1);
@@ -51,22 +51,23 @@ for k = 1:npeaks
     %Estimate the peak frequency in bins
     freqs(k) = kmax + del_hat;
     freqs(k) = (freqs(k)-1)*(2*pi/N);
+    peaks(k) = A_hat;
     
 %     figure;
-%     plot(fbins/pi,Xmag);hold on;grid on;
-%     plot(freqs(k)/pi,A_hat,'*');hold off;grid on;
-%     title('Magnitude spetrum');xlabel('Frequency in radians/pi');
+%     plot(fbins/pi*(fs/2),Xmag);hold on;grid on;
+%     plot(freqs(k)/pi*(fs/2),A_hat,'*');hold off;grid on;
+%     title('Magnitude spectrum');xlabel('Frequency in radians/pi');
     
     %Subtract the peak from the FFT data for sub-
     %sequent processing.
-    start = find(Xmag(1:kmax-1) < -6, 1,'last');
-    stop = find(Xmag(kmax+1:end) < -6, 1,'first');
+    start = find(Xmag(1:kmax-1) < -20, 1,'last');
+    stop = find(Xmag(kmax+1:end) < -20, 1,'first');
     Xmag(start:kmax+stop) = -100;
     
 end
 
 %since the data is real,spectrum is symmetric
-freqs = [-freqs, freqs];
+%freqs = [-freqs, freqs];
 
     function[peak,pos] = parabolic_interpolation(a,b,c)
         %given 3 points, it returns the result of their parabolic interpolation

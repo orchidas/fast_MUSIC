@@ -20,14 +20,18 @@ end
 N = length(x);
 %estimate autocorrelation function
 R = estimate_autocorrelation_function(x, N, method_autocorr);
+%take last half of autocorrelation only
+R = R(N+1:end);
 
 if nargin == 7
     %M is the number of antenna, or the dimension of the autocorrelation matrix
     %in our case.
-    M = find_periodicity(R,0.05);
+    period = find_periodicity(R,0.05);
+    %take more periods for better estimation
+    M =period*floor(N/period);
     %if signal is not periodic, or too short to be periodic
     if(M < 1)
-        M = N/2;
+        M = N;
     end
 end
 %get autocorrelation matrix
@@ -81,10 +85,10 @@ h = figure;
 plot(omega/pi * (fs/2), abs(P));hold on;grid on;
 plot(freqs/pi * (fs/2), peaks, '*');hold off;grid on;
 ylabel('Pseudospectrum');
-xlim([0,400]);ylim([0,1.1*max(peaks)]);
+xlim([2400,2900]);ylim([0,1.1*max(peaks)]);
 xlabel('Frequency in Hz');
 title(strcat('MUSIC-', file));
-savefig(h,strcat('../piano data/A3/music-',file,'.fig'));
+%savefig(h,strcat('../piano data/A3/music-',file,'.fig'));
 
 
 end

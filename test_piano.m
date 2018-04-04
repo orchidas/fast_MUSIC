@@ -2,15 +2,18 @@
 close all,clc;
 path = '../piano data/A3/';
 %files = {'A3.wav    ', 'A3_23D.wav','A3_13D.wav','A3_12D.wav'};
-files = {'A3.wav    ','A3_1D.wav ','A3_2D.wav ', 'A3_3D.wav ', 'A3_23D.wav','A3_13D.wav', 'A3_12D.wav'};
+%files = {'A3.wav    ','A3_1D.wav ','A3_2D.wav ', 'A3_3D.wav ', 'A3_23D.wav','A3_13D.wav', 'A3_12D.wav'};
 %files = {'C4.wav    ','C4_1D.wav ','C4_2D.wav ', 'C4_3D.wav ', 'C4_23D.wav','C4_13D.wav', 'C4_12D.wav'};
+files = {'A3_2D.wav'};
 fftsize = 8192;
 fc = 300;
 fs = 44100;
 start = 1.5*fs;
 stop = start + fftsize -1;
 %second order butterworth lowpass filter 
-[b,a] = butter(6,fc/(fs/2));
+%[b,a] = butter(6,fc/(fs/2));
+[b,a] = butter(4,[2500 2900]/(fs/2));
+
 %create frequency axis
 freqs = linspace(0, fs/2, fftsize/2);
 [v,cutoff] = min(abs(freqs - fc));
@@ -26,10 +29,9 @@ all_freqs_found_music = zeros(length(files),npeaks);
 
 for k = 1:length(files)
     
-    [x,fs] = audioread(strcat(path,files{k}));   
+    [x,fs] = audioread(strcat(path,files{k}));  
     %take 4096 samples from middle of the file (ignore attack)
     xs = x(start:stop);
-    
     %Do a simple FFT
     x_win = xs .* hann(fftsize);
     %take fft
@@ -46,7 +48,7 @@ for k = 1:length(files)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     %filter X so that it only has a fundamental
-    ys = filter(b,a,xs);
+    ys = filtfilt(b,a,xs);
     y_win = ys .* blackman(fftsize);
     %take fft
     Y = fftshift(fft(y_win,fftsize));
@@ -57,6 +59,7 @@ for k = 1:length(files)
     Ymag = 20*log10(Y);
     %plot FFT of filtered signal 
     plot(freqs(1:cutoff),Ymag(1:cutoff),'r');hold on;grid on;
+    %plot(freqs,Ymag,'r');hold on;grid on;
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
@@ -79,14 +82,14 @@ for k = 1:length(files)
     %plot QIFFT
     plot(freqs_found_Hz, peaks, 'k*'); grid on;hold off;
     xlabel('Frequency in Hz');ylabel('DFT magnitude in decibels');
-    axis([0, fc+100, -80, max(peaks)+10]);    
+    axis([0, fs/2, -80, max(peaks)+10]);    
     legend('Original signal','Filtered signal','QIFFT peaks');
     title(files{k});
     
     %apply MUSIC
-    [peaksm, freqs_foundm] = music(ys',fs,npeaks,20000,'default','fft',files{k});
-    freqs_foundm_Hz = freqs_foundm/pi * (fs/2);
-    all_freqs_found_music(k,1:npeaks) = freqs_foundm_Hz;
+%     [peaksm, freqs_foundm] = music(ys',fs,npeaks,20000,'default','fft',files{k});
+%     freqs_foundm_Hz = freqs_foundm/pi * (fs/2);
+%     all_freqs_found_music(k,1:npeaks) = freqs_foundm_Hz;
     
     %apply fast MUSIC
     [peaksfm, freqs_foundfm] = fast_music(ys',fs,npeaks,20000,'default','fft',files{k});

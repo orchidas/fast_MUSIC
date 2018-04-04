@@ -56,6 +56,7 @@ for k = 1:npeaks
 %     figure;
 %     plot(fbins/pi*(fs/2),Xmag);hold on;grid on;
 %     plot(freqs(k)/pi*(fs/2),A_hat,'*');hold off;grid on;
+%     xlim([2400,2900]);
 %     title('Magnitude spectrum');xlabel('Frequency in radians/pi');
     
     %Subtract the peak from the FFT data for sub-

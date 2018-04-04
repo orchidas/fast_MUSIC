@@ -20,16 +20,20 @@ end
 N = length(x);
 %estimate autocorrelation function
 R = estimate_autocorrelation_function(x, N, method_autocorr);
+%take last half of autocorrelation only
+R = R(N+1:end);
 %resampling will shift the spectrum
 shift = 1;
 
 %M is the number of antenna, or the dimension of the autocorrelation matrix
 %in our case.
 if nargin == 7
-    M = find_periodicity(R,0.05);
+    period = find_periodicity(R,0.05);
+    %take more periods for better estimation
+    M =period*floor(N/period);
     %if signal is not periodic, or too short to be periodic
     if(M < 1)
-        M = N/2;
+        M = N;
     end
 end
 R = R(1:M);

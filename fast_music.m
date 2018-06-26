@@ -28,7 +28,8 @@ shift = 1;
 %M is the number of antenna, or the dimension of the autocorrelation matrix
 %in our case.
 if nargin == 7
-    period = find_periodicity(R,0.05);
+    %period = find_periodicity(R,0.005);
+    period = 198;
     %take more periods for better estimation
     M =period*floor(N/period);
     %if signal is not periodic, or too short to be periodic
@@ -92,24 +93,24 @@ for m = 1:length(k)
 
 
     %vectorized code
-    curn = noise_eigvals_pos-1;
-    curk = k(m);
-    pos = find(curn*nbins == curk*M);
-    if(~isempty(pos))
-        P(m) =  M;
-        curn = noise_eigvals_pos([1:pos-1 pos+1:end])-1;
-    end
-    P(m) = P(m) +  (sum(abs(sin(pi.*(curk/nbins - curn/M)*M)./...
-           sin(pi.*(curk/nbins - curn/M)))));
-    P(m) = 1./P(m);
+%     curn = noise_eigvals_pos-1;
+%     curk = k(m);
+%     pos = find(curn*nbins == curk*M);
+%     if(~isempty(pos))
+%         P(m) =  M;
+%         curn = noise_eigvals_pos([1:pos-1 pos+1:end])-1;
+%     end
+%     P(m) = P(m) +  (sum(abs(sin(pi.*(curk/nbins - curn/M)*M)./...
+%            sin(pi.*(curk/nbins - curn/M)))));
+%     P(m) = 1./P(m);
 
-%      curn = noise_eigvals_pos-1;
-%      curk = k(m);
-%      P(m) = M./(sum((abs(sin(pi.*(curk/nbins - curn/M)*M)./...
-%            sin(pi.*(curk/nbins - curn/M)))).^2));
-%     if isnan(P(m))
-%         P(m) = 1/(M*(M-p));
-%     end  
+     curn = noise_eigvals_pos-1;
+     curk = k(m);
+     P(m) = M./(sum((abs(sin(pi.*(curk/nbins - curn/M)*M)./...
+           sin(pi.*(curk/nbins - curn/M)))).^2));
+    if isnan(P(m))
+        P(m) = 1/(M*(M-p));
+    end  
     
 end
 

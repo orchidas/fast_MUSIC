@@ -54,8 +54,4 @@ for k = 1:nfiles
 
 end
 
-% figure(1); plot((0:nbins)/nbins*fs/2000,20*log10(abs(tf(1:nbins+1,:))/max(abs(tf(:))))); 
-% ylim([-80 0]);
-% xlim([2.66,2.68]);
-% grid on;hold off;
 legend(files);

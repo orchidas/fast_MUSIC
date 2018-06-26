@@ -82,12 +82,15 @@ end
 freqs = (freqs-1)*(pi/length(P));
 
 h = figure;
-plot(omega/pi * (fs/2), abs(P));hold on;grid on;
-plot(freqs/pi * (fs/2), peaks, '*');hold off;grid on;
+%plot(omega/pi * (fs/2), abs(P));hold on;grid on;
+%plot(freqs/pi * (fs/2), peaks, '*');hold off;grid on;
+plot(omega, abs(P));hold on;grid on;
+plot(freqs, peaks, '*');hold off;grid on;
+xlim([0,0.1]);
 ylabel('Pseudospectrum');
 %xlim([2400,2900]);ylim([0,1.1*max(peaks)]);
-xlabel('Frequency in Hz');
-title(strcat('MUSIC-', file));
+xlabel('Frequency in rad/s');
+title(strcat('MUSIC ', file));
 %savefig(h,strcat('../piano data/A3/music-',file,'.fig'));
 
 

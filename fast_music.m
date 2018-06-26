@@ -28,8 +28,8 @@ shift = 1;
 %M is the number of antenna, or the dimension of the autocorrelation matrix
 %in our case.
 if nargin == 7
-    %period = find_periodicity(R,0.005);
-    period = 198;
+    period = find_periodicity(R,0.05);
+    %period = 198;
     %take more periods for better estimation
     M =period*floor(N/period);
     %M = period;
@@ -70,8 +70,10 @@ end
 
 p = 2*nsignals;
 noise_eigvals_pos = inds(p+1:M);
+sig_eigvals_pos = inds(1:p);
 
 k = 0:nbins/2-1;
+N_k = length(k)*2;
 %k = -nbins/2+1:nbins/2;
 P = zeros(nbins/2,1);
 
@@ -105,13 +107,23 @@ for m = 1:length(k)
 %            sin(pi.*(curk/nbins - curn/M)))));
 %     P(m) = 1./P(m);
 
-     curn = noise_eigvals_pos-1;
-     curk = k(m);
-     P(m) = M./(sum((abs(sin(pi.*(curk/nbins - curn/M)*M)./...
-           sin(pi.*(curk/nbins - curn/M)))).^2));
+     %noise subspace approximation
+%      curn = noise_eigvals_pos-1;
+%      curk = k(m);
+%      P(m) = M./(sum((abs(sin(pi.*(curk/nbins - curn/M)*M)./...
+%            sin(pi.*(curk/nbins - curn/M)))).^2));
+%     if isnan(P(m))
+%         P(m) = 1/(M*(M-p));
+%     end  
+    
+    %signal subspace approximation
+    curn = sig_eigvals_pos-1;
+    curk = k(m);
+    P(m) = 1./(M - (1/M)*sum((sin(pi.*(curk/nbins - curn/M)*M)./...
+           sin(pi.*(curk/nbins - curn/M))).^2));
     if isnan(P(m))
-        P(m) = 1/(M*(M-p));
-    end  
+        P(m) = 1/(M - M*p);
+    end
     
 end
 
@@ -122,13 +134,15 @@ P = P * shift;
 freqs = (freqs-1)*(pi/length(P));
  
 h = figure;
-plot(k/(nbins/2) * (fs/2), P);hold on;grid on;
-plot(freqs/pi * (fs/2), peaks, '*');hold off;grid on;
-%xlim([0,fs/2]);ylim([0,1.1*max(peaks)]);
+%plot(k/(nbins/2) * (fs/2), P);hold on;grid on;
+%plot(freqs/pi * (fs/2), peaks, '*');hold off;grid on;
+plot(k/(nbins/2)*pi, P);hold on;grid on;
+plot(freqs, peaks, '*');hold off;grid on;
+xlim([0,0.1]);
 %xlim([2400,2900]);ylim([0,1.1*max(peaks)]);
 ylabel('Pseudospectrum');
-xlabel('Frequency Hz');
-title(strcat('Fast MUSIC-', file));
+xlabel('Frequency in rad/s');
+title(strcat('Fast MUSIC ', file));
 %savefig(h,strcat('../piano data/A3/fmusic-',file,'.fig'));
 
 

@@ -24,7 +24,7 @@ x = awgn(y_norm, snr);
 sort(freqs_fast)
 
 %MUSIC
-[peaks_m,freqs] = music(x,1,2,2000,'default','fft','',200);
+[peaks_m,freqs] = music(x,1,2,2000,'default','fft','');
 sort(freqs)
 
 %%QIFFT

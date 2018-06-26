@@ -1,13 +1,15 @@
-
+% this script reads audio files of the A3 note on the piano with each string damped,
+% each pair of strings damped and all 3 strings in undamped. It then plots
+% their FFTs and the peaks detected by FAST MUSIC
 
 close all;
-%clear all;
+clear all;
 path = '../piano data/A3/';
 files = {'A3.wav    ','A3_1D.wav ','A3_2D.wav ','A3_3D.wav ','A3_23D.wav','A3_13D.wav','A3_12D.wav'};
 fs = 44100;
 nfiles = length(files);
 [b,a] = butter(4,[2500 2900]/(fs/2));
-nsamp = 6*fs;
+nsamp = 5*fs;
 window = blackman(nsamp);
 %nbins = 2^nextpow2(nsamp);
 nbins = 2^19;

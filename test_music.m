@@ -1,9 +1,9 @@
 %Script to test MUSIC and fast_MUSIC 
 
-close all, clear all, clc;
+close all, clc;
 
 %number of available data points
-N = 8000;
+N = 2000;
 n = 0:N-1;
 %clean signal
 %example 1
@@ -20,11 +20,11 @@ x = awgn(y_norm, snr);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %fast MUSIC - split radix does not work - see what's going on
-freqs_fast = fast_music(x,2,2000,'default', 'fft');
+[peaks_fm,freqs_fast] = fast_music(x,1,2,2000,'default', 'fft','');
 sort(freqs_fast)
 
 %MUSIC
-freqs = music(x,2,2000,'default','fft',200);
+[peaks_m,freqs] = music(x,1,2,2000,'default','fft','',200);
 sort(freqs)
 
 %%QIFFT

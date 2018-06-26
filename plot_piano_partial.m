@@ -1,3 +1,9 @@
+% this script reads in an audio file containing a piano note,
+% bandpass filters it so that it only has the 10th partial, then runs
+% FAST MUSIC on it to detect the peaks (there should be 2). It overlays it 
+% on top of the FFT plot.
+
+%clear all;
 close all;
 path = '../piano data/A3/';
 file = 'A3.wav';
@@ -23,7 +29,7 @@ nsamp = nsamps(n);
 window = blackman(nsamp);
 ys = y(fs+(1:nsamp));
 tfs(:,n) = fft(ys.*window, 2*nbins);
-[peaksfm, freqs_foundfm] = fast_music(ys',fs,npeaks,100000,'default','fft',file);
+[peaksfm, freqs_foundfm] = fast_music(ys',fs,npeaks,500000,'default','fft',file);
 freqs_foundfm = sort(freqs_foundfm);
 freqs_foundfm_L(n) = freqs_foundfm(1)/pi * (fs/2);
 freqs_foundfm_U(n) = freqs_foundfm(2)/pi * (fs/2);

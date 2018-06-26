@@ -32,6 +32,7 @@ if nargin == 7
     period = 198;
     %take more periods for better estimation
     M =period*floor(N/period);
+    %M = period;
     %if signal is not periodic, or too short to be periodic
     if(M < 1)
         M = N;
@@ -124,7 +125,7 @@ h = figure;
 plot(k/(nbins/2) * (fs/2), P);hold on;grid on;
 plot(freqs/pi * (fs/2), peaks, '*');hold off;grid on;
 %xlim([0,fs/2]);ylim([0,1.1*max(peaks)]);
-xlim([2400,2900]);ylim([0,1.1*max(peaks)]);
+%xlim([2400,2900]);ylim([0,1.1*max(peaks)]);
 ylabel('Pseudospectrum');
 xlabel('Frequency Hz');
 title(strcat('Fast MUSIC-', file));

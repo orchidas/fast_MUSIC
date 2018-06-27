@@ -45,19 +45,20 @@ for k = 1:npeaks
         [A_hat, del_hat] = parabolic_interpolation(Xmag(kmax-1), Xmag(kmax),...
         Xmag(kmax+1));
     else
+        A_hat = -60;
         del_hat = 0;
     end
 
     %Estimate the peak frequency in bins
     freqs(k) = kmax + del_hat;
-    freqs(k) = (freqs(k)-1)*(2*pi/N);
+    freqs(k) = (freqs(k)-1)*(2/N)*(fs/2);
     peaks(k) = A_hat;
     
-%     figure;
+%     figure(1);
 %     plot(fbins/pi*(fs/2),Xmag);hold on;grid on;
-%     plot(freqs(k)/pi*(fs/2),A_hat,'*');hold off;grid on;
-%     xlim([2400,2900]);
-%     title('Magnitude spectrum');xlabel('Frequency in radians/pi');
+%     plot(freqs(k),A_hat,'*');hold off;grid on;
+%     %xlim([2400,2900]);
+%     title('Magnitude spectrum');xlabel('Frequency in Hz');
     
     %Subtract the peak from the FFT data for sub-
     %sequent processing.

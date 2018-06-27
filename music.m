@@ -42,7 +42,7 @@ Rx = toeplitz(R(1:M));
 %matlab's built-in function
 if strcmp(method_eig,'default')
     [eig_vec, eig_vals] = eig(Rx);
-    
+
 %my eigen decomposition function
 else
     %not all methods need same number of iterations to converge
@@ -65,8 +65,10 @@ noise_eigvals_pos = inds(p+1:M);
 noise_eigvec = eig_vec(:,noise_eigvals_pos);
 noise_subspace = noise_eigvec*noise_eigvec';
 
+%since the signal is real, our search space can be over positive
+%frequencies only
 %omega = linspace(-pi,pi,nbins);
-omega = linspace(0,pi,nbins+1);
+omega = linspace(0,pi,nbins/2+1);
 omega = omega(1:end-1);
 k = 0:M-1;
 P = zeros(length(omega),1);
@@ -79,18 +81,16 @@ end
 %frequency estimates
 [peaks,freqs] = find_peaks(abs(P),nsignals);
 %freqs = -pi + freqs*(2*pi/length(P));
-freqs = (freqs-1)*(pi/length(P));
+freqs = (freqs-1)/length(P) * fs/2;
 
-h = figure;
-%plot(omega/pi * (fs/2), abs(P));hold on;grid on;
-%plot(freqs/pi * (fs/2), peaks, '*');hold off;grid on;
-plot(omega, abs(P));hold on;grid on;
-plot(freqs, peaks, '*');hold off;grid on;
-xlim([0,0.1]);
-ylabel('Pseudospectrum');
-%xlim([2400,2900]);ylim([0,1.1*max(peaks)]);
-xlabel('Frequency in rad/s');
-title(strcat('MUSIC ', file));
+% h = figure;
+% plot(omega/pi * (fs/2), abs(P));hold on;grid on;
+% plot(freqs, peaks, '*');hold off;grid on;
+% %xlim([0,0.1]);
+% ylabel('Pseudospectrum');
+% %xlim([2400,2900]);ylim([0,1.1*max(peaks)]);
+% xlabel('Frequency in Hz');
+% title(strcat('MUSIC ', file));
 %savefig(h,strcat('../piano data/A3/music-',file,'.fig'));
 
 

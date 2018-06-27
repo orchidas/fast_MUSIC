@@ -26,9 +26,11 @@ elseif strcmp(method,'fft')
     nfft = 2^nextpow2(2*M-1);
     R_hat = ifft( fft(data,nfft) .* conj(fft(data,nfft)) );
     %# rearrange and keep values corresponding to lags: -(len-1):+(len-1)
-    R_hat = [R_hat(end-M+2:end) , R_hat(1:M)];
-    %remove bias (remove triangular weightings)
-    l = [M-1:-1:0, 1:M-1];
+%     R_hat = [R_hat(end-M+2:end) , R_hat(1:M)];
+%     %remove bias (remove triangular weightings)
+%     l = [M-1:-1:0, 1:M-1];
+    R_hat = [R_hat(end-M+1:end) , R_hat(1:M)];
+    l = [M-1:-1:0, 0:M-1];
     R_hat = R_hat./(L-l);
 end
 

@@ -1,4 +1,4 @@
-function [peaks,freqs] = fast_music(x, fs, nsignals, nbins, method_eig, method_autocorr,file,M)
+function [peaks,freqs,M] = fast_music(x, fs, nsignals, nbins, method_eig, method_autocorr,file,M)
 
 %Replace eigenvalue decomposition in MUSIC with FFT
 %x - signal
@@ -72,10 +72,12 @@ p = 2*nsignals;
 noise_eigvals_pos = inds(p+1:M);
 sig_eigvals_pos = inds(1:p);
 
-k = 0:nbins/2-1;
-N_k = length(k)*2;
+%since the signal is real, our search space can be over positive
+%frequencies only
 %k = -nbins/2+1:nbins/2;
+k = 0:nbins/2-1;
 P = zeros(nbins/2,1);
+meps = 10^-6;
 
 %alternative pseudospectrum estimate from closed-form solution
 for m = 1:length(k)
@@ -112,9 +114,9 @@ for m = 1:length(k)
 %      curk = k(m);
 %      P(m) = M./(sum((abs(sin(pi.*(curk/nbins - curn/M)*M)./...
 %            sin(pi.*(curk/nbins - curn/M)))).^2));
-%     if isnan(P(m))
+%      if isnan(P(m))
 %         P(m) = 1/(M*(M-p));
-%     end  
+%      end  
     
     %signal subspace approximation
     curn = sig_eigvals_pos-1;
@@ -122,7 +124,8 @@ for m = 1:length(k)
     P(m) = 1./(M - (1/M)*sum((sin(pi.*(curk/nbins - curn/M)*M)./...
            sin(pi.*(curk/nbins - curn/M))).^2));
     if isnan(P(m))
-        P(m) = 1/(M - M*p);
+        %P(m) = 1/M + abs(1/(M-M*p)); 
+        P(m) = 1/meps;
     end
     
 end
@@ -131,18 +134,16 @@ end
 P = P * shift;
 %frequency estimates
 [peaks,freqs] = find_peaks(P,nsignals);
-freqs = (freqs-1)*(pi/length(P));
+freqs = (freqs-1)/length(P)*fs/2;
  
-h = figure;
-%plot(k/(nbins/2) * (fs/2), P);hold on;grid on;
-%plot(freqs/pi * (fs/2), peaks, '*');hold off;grid on;
-plot(k/(nbins/2)*pi, P);hold on;grid on;
-plot(freqs, peaks, '*');hold off;grid on;
-xlim([0,0.1]);
-%xlim([2400,2900]);ylim([0,1.1*max(peaks)]);
-ylabel('Pseudospectrum');
-xlabel('Frequency in rad/s');
-title(strcat('Fast MUSIC ', file));
+% h = figure;
+% plot(k/(nbins/2) * (fs/2), P);hold on;grid on;
+% plot(freqs, peaks, '*');hold off;grid on;
+% %xlim([0,0.1]);
+% %xlim([2400,2900]);ylim([0,1.1*max(peaks)]);
+% ylabel('Pseudospectrum');
+% xlabel('Frequency in Hz');
+% title(strcat('Fast MUSIC ', file));
 %savefig(h,strcat('../piano data/A3/fmusic-',file,'.fig'));
 
 

@@ -11,7 +11,7 @@ n = 0:N-1;
 %example 2
 %y = cos(2*0.24*pi.*n) + 0.5*cos(2*0.26*pi.*n + 0.25*pi);
 %example 3
-y = cos(0.04.*n) + 0.5*cos(0.05.*n);
+y = cos(2*pi*0.04.*n) + 0.5*cos(2*pi*0.05.*n);
 %normalize signal power to 0dB
 y_norm = y./max(abs(y));
 snr = 10;
@@ -20,16 +20,16 @@ x = awgn(y_norm, snr);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %fast MUSIC - split radix does not work - see what's going on
-[peaks_fm,freqs_fast] = fast_music(x,1,2,2000,'default', 'fft','');
+[peaks_fm,freqs_fast] = fast_music(x,1,2,5000,'default', 'fft','');
 sort(freqs_fast)
 
 %MUSIC
-[peaks_m,freqs] = music(x,1,2,2000,'default','fft','');
+[peaks_m,freqs] = music(x,1,2,5000,'default','fft','');
 sort(freqs)
 
 %%QIFFT
-freqs = qifft(x,4096,'black',5,2);
-sort(freqs)
+[peaks,freqs_q] = qifft(x,1,4096,'black',5,2);
+sort(freqs_q)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

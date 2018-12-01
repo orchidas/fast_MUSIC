@@ -76,22 +76,7 @@ meps = 10^-6;
 %alternative pseudospectrum estimate from closed-form solution
 for m = 1:length(k)
     
-%     for n = 1:length(noise_eigvals_pos)
-%         curn = noise_eigvals_pos(n)-1;
-%         %this is required to make the function symmetric
-%         curk = abs(k(m));
-%         %to avoid NaN error, evaluated using L'Hospital's rule
-%         if(curk*M == curn*nbins)
-%             P(m) = P(m) + M;
-%         else
-%             P(m) = P(m) + 1/sqrt(M)*(abs(sin(pi*(curk/nbins - curn/M)*M)/...
-%             sin(pi*(curk/nbins - curn/M))));
-%         end
-%     end
-%     P(m) = 1/P(m);
-
-
-    %vectorized code
+%    %vectorized code
 %     curn = noise_eigvals_pos-1;
 %     curk = k(m);
 %     pos = find(curn*nbins == curk*M);
@@ -118,7 +103,6 @@ for m = 1:length(k)
     P(m) = 1./(M - (1/M)*sum((sin(pi.*(curk/nbins - curn/M)*M)./...
            sin(pi.*(curk/nbins - curn/M))).^2));
     if isnan(P(m))
-        %P(m) = 1/M + abs(1/(M-M*p)); 
         P(m) = 1/meps;
     end
     
@@ -135,10 +119,12 @@ freqs = (freqs-1)/length(P)*fs/2;
 % plot(freqs, peaks, '*');hold off;grid on;
 % %xlim([0,0.1]);
 % %xlim([2400,2900]);ylim([0,1.1*max(peaks)]);
-% ylabel('Pseudospectrum');
-% xlabel('Frequency in Hz');
-% title(strcat('Fast MUSIC ', file));
-%savefig(h,strcat('../piano data/A3/fmusic-',file,'.fig'));
+% xlim([2660,2680]);
+% ylabel('Pseudospectrum','fontsize',16);
+% xlabel('Frequency in Hz','fontsize',14);
+% %title(strcat('Fast MUSIC ', file));
+% print(strcat('../Figures/',file,'.eps'),'-deps');
+% %savefig(h,strcat('../piano data/A3/fmusic-',file,'.fig'));
 
 
 end

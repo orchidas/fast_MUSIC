@@ -1,21 +1,15 @@
-function [peaks,freqs] = music(x, fs, nsignals, nbins, method_eig, method_autocorr,file,M)
+function [peaks,freqs] = music(x, fs, nsignals, nbins, M)
 
 %MUSIC algorithm for sinusoid parameter estimation
 %x - signal corrupted with white noise
 %fs - sampling frequency - required for plotting pseudospectrum
 %nsignals - number of real sinusoids in signal
 %nbins - number of bins in search space
-%method eig - algorithm for eigenvalue decomposition
-%method_autocorr - method for calculating autocorrelation function, direct
-%or fft
 %M - autocorrelation matrix order (ideally should be calcuated from ACF
 %periodicity, but included just for plotting accuracy vs M).
 
-if nargin == 4
-    method_eig = 'default';
-elseif nargin == 5
-    method_autocorr = 'fft';
-end
+method_eig = 'default';
+method_autocorr = 'fft';
 
 N = length(x);
 %estimate autocorrelation function
@@ -23,7 +17,7 @@ R = estimate_autocorrelation_function(x, N, method_autocorr);
 %take last half of autocorrelation only
 R = R(N+1:end);
 
-if nargin == 7
+if nargin == 4
     %M is the number of antenna, or the dimension of the autocorrelation matrix
     %in our case.
     period = find_periodicity(R,0.05);

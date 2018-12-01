@@ -1,21 +1,15 @@
-function [peaks,freqs,M] = fast_music(x, fs, nsignals, nbins, method_eig, method_autocorr,file,M)
+function [peaks,freqs,M] = fast_music(x, fs, nsignals, nbins, M)
 
 %Replace eigenvalue decomposition in MUSIC with FFT
 %x - signal
 %fs - sampling frequency, required for plotting pseudospectrum
 %nsignals - number of real sinusoids in signal
 %nbins - number of points in search space
-%method_eig - calculate eigenvalues with dft or fft
-%method_autocorr - method for estimating autocorrelation function, direct
-%or fft
 %M - autocorrelation matrix order (ideally should be calcuated from ACF
 %periodicity, but included just for plotting accuracy vs M).
 
-if nargin == 4
-    method_eig = 'default';
-elseif nargin == 5
-    method_autocorr = 'fft';
-end
+method_eig = 'default';
+method_autocorr = 'fft';
 
 N = length(x);
 %estimate autocorrelation function
@@ -27,7 +21,7 @@ shift = 1;
 
 %M is the number of antenna, or the dimension of the autocorrelation matrix
 %in our case.
-if nargin == 7
+if nargin == 4
     period = find_periodicity(R,0.05);
     %period = 198;
     %take more periods for better estimation

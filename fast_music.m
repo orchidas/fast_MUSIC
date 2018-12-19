@@ -120,17 +120,17 @@ P = P * shift;
 [peaks,freqs] = find_peaks(P,nsignals);
 freqs = (freqs-1)/length(P)*fs/2;
  
-% h = figure;
-% plot(k/(nbins/2) * (fs/2), P);hold on;grid on;
-% plot(freqs, peaks, '*');hold off;grid on;
-% %xlim([0,0.1]);
-% %xlim([2400,2900]);ylim([0,1.1*max(peaks)]);
-% xlim([2660,2680]);
-% ylabel('Pseudospectrum','fontsize',16);
-% xlabel('Frequency in Hz','fontsize',14);
-% %title(strcat('Fast MUSIC ', file));
-% print(strcat('../Figures/',file,'.eps'),'-deps');
-% %savefig(h,strcat('../piano data/A3/fmusic-',file,'.fig'));
+h = figure;
+plot(k/(nbins/2) * (fs/2), P);hold on;grid on;
+plot(freqs, peaks, '*');hold off;grid on;
+xlim([0,0.01]);
+%xlim([2400,2900]);ylim([0,1.1*max(peaks)]);
+%xlim([2660,2680]);
+ylabel('Pseudospectrum','fontsize',16);
+xlabel('Frequency in Hz','fontsize',14);
+%title(strcat('Fast MUSIC ', file));
+%print(strcat('../Figures/',file,'.eps'),'-deps');
+%savefig(h,strcat('../piano data/A3/fmusic-',file,'.fig'));
 
 
 end

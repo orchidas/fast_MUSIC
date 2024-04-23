@@ -1,13 +1,21 @@
 function [peaks,freqs] = qifft(x,fs,N,win,zpf,npeaks)
-%Quadratically Interpolated FFT (QIFFT)
-%method for estimating sinusoidal parameters from
-%peaks in spectral magnitude data
 
-%x - block of signal
-%N - length of fft (power of 2)
-%win - type of window, rect, hann, ham, black
-%zpf - zero padding factor
-%npeaks - number of peaks in spectrum
+%%
+% Quadratically Interpolated FFT (QIFFT)
+% method for estimating sinusoidal parameters from
+% peaks in spectral magnitude data
+% Inputs:
+% x - block of signal
+% N - length of fft (power of 2)
+% win - type of window, rect, hann, ham, black
+% zpf - zero padding factor
+% npeaks - number of peaks in spectrum
+% Returns:
+% peaks - array of peaks
+% freqs - frequencies at which the peaks are found in Hz
+%%
+
+
 
 %length of fft
 %window length
@@ -54,11 +62,6 @@ for k = 1:npeaks
     freqs(k) = (freqs(k)-1)*(2/N)*(fs/2);
     peaks(k) = A_hat;
     
-%     figure(1);
-%     plot(fbins/pi*(fs/2),Xmag);hold on;grid on;
-%     plot(freqs(k),A_hat,'*');hold off;grid on;
-%     %xlim([2400,2900]);
-%     title('Magnitude spectrum');xlabel('Frequency in Hz');
     
     %Subtract the peak from the FFT data for sub-
     %sequent processing.

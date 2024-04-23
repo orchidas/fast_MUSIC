@@ -1,12 +1,6 @@
 %script to test eigenvalue decomposition algorithm
 close all, clear all, clc;
 
-% D = diag(1:10);
-% rand('seed',36);
-% S = rand(10); 
-% S = (S-0.5)*2;
-% A = S*D/S;
-
 %generate symmetric random matrix
 rand('seed',36);
 a = rand(10);

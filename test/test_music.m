@@ -43,9 +43,9 @@ L = length(M);
 t = zeros(L, nmethods);
 err = zeros(L,nmethods);
 freqs = zeros(L, nmethods, 2*nsig);
-%sig_freqs = [-0.6, -0.5, -0.4, 0.4, 0.5, 0.6];
-sig_freqs = [-0.26,-0.24,0.24,0.26]*2*pi;
-%sig_freqs = [-0.05,-0.04,0.04,0.05];
+% sig_freqs = [-0.6, -0.5, -0.4, 0.4, 0.5, 0.6];
+% sig_freqs = [-0.26,-0.24,0.24,0.26]*2*pi;
+sig_freqs = [-0.05,-0.04,0.04,0.05];
 f = zeros(1,2*nsig);
 
 %frequencies detected by MUSIC with basic QR
@@ -118,34 +118,28 @@ markers = 'odv*xs';
 %plot computation time and MSE plots
 figure;
 for k = 1:nmethods
-    %plot(nbins, t(:,k));hold on;grid on;
     p = plot(M, log(t(:,k)), strcat('-',markers(k)));hold on;grid on;
     p.MarkerSize = 8;
 end
 hold off;
 xlabel('Order of autocorrelation matrix');
-%xlabel('Number of bins in search space');
 ylabel('Time in seconds (log)');
 legend('MUSIC basic QR','MUSIC hess QR','MUSIC implicit QR', ...
     'fast MUSIC mixed radix fft','fast MUSIC resampled split radix fft',...
     'fast MUSIC dft');
-%title(strcat('Order of autocorrelation matrix =', num2str(M)));
 title(strcat('Number of bins in search space =', num2str(nbins)));
 
 figure;
 for k = 1:nmethods
-    %plot(nbins, log10(err(:,k)+eps));hold on;grid on;
     p = plot(M, log10(err(:,k)+eps), strcat('-',markers(k)));hold on;grid on;
     p.MarkerSize = 8;
 end
 hold off;
-%xlabel('Number of bins in search space');
 xlabel('Order of autocorrelation matrix');
 ylabel('Mean squared error in Hz (log_{10})');
 legend('MUSIC basic QR','MUSIC hess QR','MUSIC implicit QR', ...
     'fast MUSIC mixed radix fft','fast MUSIC resampled split radix fft',...
     'fast MUSIC dft');
-%title(strcat('Order of autocorrelation matrix =', num2str(M)));
 title(strcat('Number of bins in search space =', num2str(nbins)));
 
 

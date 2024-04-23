@@ -1,15 +1,51 @@
-function [peaks,freqs] = music(x, fs, nsignals, nbins, M)
+function [peaks,freqs] = music(x, fs, nsignals, nbins, varargin)
 
-%MUSIC algorithm for sinusoid parameter estimation
-%x - signal corrupted with white noise
-%fs - sampling frequency - required for plotting pseudospectrum
-%nsignals - number of real sinusoids in signal
-%nbins - number of bins in search space
-%M - autocorrelation matrix order (ideally should be calcuated from ACF
-%periodicity, but included just for plotting accuracy vs M).
+%% 
+% MUSIC algorithm for sinusoid parameter estimation.
+% Inputs:
+% x - signal corrupted with white noise
+% fs - sampling frequency - required for plotting pseudospectrum
+% nsignals - number of real sinusoids in signal
+% nbins - number of bins in search space
+% method_eig (optional) - method used for eigenvalue decomposition
+% method_autocorr (optional) - method used for calculating autocorrelation
+%                               function
+% file (optional) - name of the signal to be plotted
+% plot_spec (optional) - whether to plot the pseudospectrum
+% Returns:
+% peaks - array of peak values
+% freqs - frequencies at which the peaks are found, in Hz
+%%
 
-method_eig = 'default';
-method_autocorr = 'fft';
+switch nargin
+    case 4
+        method_eig = 'default';
+        method_autocorr = 'fft';
+        file = '';
+        plot_spec = 0;
+    case 5
+        method_eig = varargin{1};
+        method_autocorr = 'fft';
+        file = '';
+        plot_spec = 0;
+    case 6
+        method_eig = varargin{1};
+        method_autocorr = varargin{2};
+        file = '';
+        plot_spec = 0;
+    case 7
+        method_eig = varargin{1};
+        method_autocorr = varargin{2};
+        file = varargin{3};
+        plot_spec = 0;
+    case 8
+        method_eig = varargin{1};
+        method_autocorr = varargin{2};
+        file = varargin{3};
+        plot_spec = varargin{4};
+    otherwise
+        error('Wrong number of inputs');
+end
 
 N = length(x);
 %estimate autocorrelation function
@@ -17,17 +53,16 @@ R = estimate_autocorrelation_function(x, N, method_autocorr);
 %take last half of autocorrelation only
 R = R(N+1:end);
 
-if nargin == 4
-    %M is the number of antenna, or the dimension of the autocorrelation matrix
-    %in our case.
-    period = find_periodicity(R,0.05);
-    %take more periods for better estimation
-    M =period*floor(N/period);
-    %if signal is not periodic, or too short to be periodic
-    if(M < 1)
-        M = N;
-    end
+%M is the number of antenna, or the dimension of the autocorrelation matrix
+%in our case.
+period = find_periodicity(R,0.05);
+%take more periods for better estimation
+M =period*floor(N/period);
+%if signal is not periodic, or too short to be periodic
+if(M < 1)
+    M = N;
 end
+
 %get autocorrelation matrix
 Rx = toeplitz(R(1:M));
 
@@ -50,7 +85,7 @@ else
     [eig_vec,eig_vals] = eig_decomp(Rx,method_eig,niter);
 end
 
-[eig_vals_sorted, inds] = sort(abs(diag(eig_vals)),'descend');
+[~, inds] = sort(abs(diag(eig_vals)),'descend');
 
 %twice the number of real sinusoids
 p = 2*nsignals;
@@ -61,7 +96,6 @@ noise_subspace = noise_eigvec*noise_eigvec';
 
 %since the signal is real, our search space can be over positive
 %frequencies only
-%omega = linspace(-pi,pi,nbins);
 omega = linspace(0,pi,nbins/2+1);
 omega = omega(1:end-1);
 k = 0:M-1;
@@ -74,20 +108,15 @@ for n = 1:length(omega)
 end
 %frequency estimates
 [peaks,freqs] = find_peaks(abs(P),nsignals);
-%freqs = -pi + freqs*(2*pi/length(P));
 freqs = (freqs-1)/length(P) * fs/2;
 
-h = figure;
-plot(omega/pi * (fs/2), abs(P));hold on;grid on;
-plot(freqs, peaks, '*');hold off;grid on;
-xlim([0,0.01]);
-ylabel('Pseudospectrum');
-%xlim([2400,2900]);ylim([0,1.1*max(peaks)]);
-xlabel('Frequency in Hz');
-title(strcat('MUSIC ', file));
-%savefig(h,strcat('../piano data/A3/music-',file,'.fig'));
-
-
+if plot_spec
+    plot(omega/pi * (fs/2), abs(P));hold on;grid on;
+    plot(freqs, peaks, '*');hold off;grid on;
+    xlim([0,0.01]);
+    ylabel('Pseudospectrum');
+    xlabel('Frequency in Hz');
+    title(strcat('MUSIC ', file));
 end
 
 

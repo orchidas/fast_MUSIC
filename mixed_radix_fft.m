@@ -1,10 +1,14 @@
 function [X] = mixed_radix_fft(x, N)
 
-%Function to compute mixed radix FFT for any composite length N
-%according to algorithm given in 'Self-sorting mixed radix fast Fourier
-%transforms' - C Temperton, published in Journal of Computational Physics
-%X - DFT of x
-%x - Input vector of length(N), can be real or complex
+%%
+% Function to compute mixed radix FFT for any composite length N
+% according to algorithm given in 'Self-sorting mixed radix fast Fourier
+% transforms' - C Temperton, published in Journal of Computational Physics
+% Input:
+% x - Input vector of length(N), can be real or complex
+% Returns
+% X - DFT of x
+%%
 
 C = zeros(N,1);
 A = x;
@@ -56,26 +60,12 @@ end
         jump = (ifac-1)*LA;
         for k = 0:LA:(M-LA)
             for l = 1:LA
-                
-               %unsimplified matrix calculation
-%                 if(k == 0)
-%                     omega = eye(ifac);
-%                 else
-%                     omega = diag(trigs((0:(ifac-1))*k+1));
-%                 end                 
-%                 C(ja+j) = omega * (dftmtx(ifac)*A(ia+i));
-%                
-%               %simplified matrix calculation - fastest
+                               
+                % simplified matrix calculation - fastest
                 for m = 1:ifac
                     C(ja(m)+j) = trigs(k*(m-1)+1) * sum(A(ia + i) .* ...
                         exp(-2*pi*1i*(0:ifac-1)*(m-1)/ifac).'); 
-%                   C(ja(m)+j) = exp(-2*pi*1i*k*(m-1)/N) * sum(A(ia + i) .* ...
-%                         exp(-2*pi*1i*(0:ifac-1)*(m-1)/ifac).'); 
                 end
-
-%                 %vectorized version
-%                 C(ja + j) =  trigs((0:ifac-1)*k+1).' .* ...
-%                     (dftmtx(ifac)*A(ia+i));
                 
                 i = i+1;
                 j = j+1;

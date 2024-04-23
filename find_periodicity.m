@@ -1,7 +1,24 @@
-function [period] = find_periodicity(x, thresh)
+function [period] = find_periodicity(x, thresh, varargin)
 
-%finds periodicity in autocorrelation function using AMDF
+%%
+% Finds periodicity in autocorrelation function using AMDF
+% Inputs:
+% x - input time domain signal
+% thresh - threshold for peak calculation
+% plot_func (optional_ - whether to plot the AMDF function
+% Returns:
+% period - periodicity of signal in samples
+%%
 
+switch nargin
+    case 2
+        plot_func = 0;
+    case 3
+        plot_func = varargin{1};
+    otherwise
+        error("Wrong number of inputs");
+end
+    
 tau_min = 0;
 tau_max = length(x)-1;
 period = -1;
@@ -16,9 +33,11 @@ for n = tau_min:tau_max
     D(n-tau_min+1) = D(n-tau_min+1)/L;
 end
 
-% figure;
-% plot(tau_min:tau_max, D);grid on;
-% xlabel('Lags in samples');ylabel('AMDF function');
+if plot_func
+    figure;
+    plot(tau_min:tau_max, D);grid on;
+    xlabel('Lags in samples');ylabel('AMDF function');
+end
 
 local_minima = zeros(length(D),2);
 k = 1;

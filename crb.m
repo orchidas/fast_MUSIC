@@ -1,14 +1,18 @@
 function [bounds] = crb(p,N,theta,sigma_z)
 
-%function to calculate Cramer Rao bound for a sum of real sinusoids
-%in noise for unbiased estimator - See "Modern Spectral Estimation" 
-%by Steven Kay, Section 13.4
-%p - number of real sinusoids
-%N - number of data points available
-%theta - a vector consisting of all amplitudes, frequencies and phases,
-%in order - [f1,a1,phi1,...,fp,ap,phip]
-%sigma_z = variance of noise corrupting the signal
-%bounds - array containing CRB for each parameter in theta
+%%
+% Function to calculate Cramer Rao bound for a sum of real sinusoids
+% in noise for unbiased estimator - See "Modern Spectral Estimation" 
+% by Steven Kay, Section 13.4.
+% Inputs:
+% p - number of real sinusoids
+% N - number of data points available
+% theta - a vector consisting of all amplitudes, frequencies and phases,
+%         in order - [f1,a1,phi1,...,fp,ap,phip]
+% sigma_z = variance of noise corrupting the signal
+% Returns:
+% bounds - array containing CRB for each parameter in theta
+%% 
 
 M = zeros(3*p,3*p);
 bounds = zeros(3*p,1);
@@ -39,11 +43,6 @@ for i = 1:3:3*p
     %phase bound
     bounds(i+2) = (sigma_z* M_inv(i,i))/(2*(theta(i+1)^2));
 end
-        
-%direct calculation of CRB for frequencies
-% C = inv(M(1:3,1:3) - M(1:3,4:6)*inv(M(4:6,4:6))*M(4:6,1:3));
-% bounds(1) = sigma_z*C(1,1)/(2*(theta(2)*2*pi)^2);
-% bounds(4) = sigma_z*C(1,1)/(2*(theta(5)*2*pi)^2);
 
     function [val] = del(i,j,n,theta)
         val = 2*pi*(theta(i)-theta(j)).*n + (theta(i+2) - theta(j+2));

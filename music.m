@@ -7,8 +7,6 @@ function [peaks,freqs] = music(x, fs, nsignals, nbins, varargin)
 % fs - sampling frequency - required for plotting pseudospectrum
 % nsignals - number of real sinusoids in signal
 % nbins - number of bins in search space
-% M (optional) - autocorrelation matrix order (ideally should be calcuated from ACF
-% periodicity, but included just for plotting accuracy vs M).
 % method_eig (optional) - method used for eigenvalue decomposition
 % method_autocorr (optional) - method used for calculating autocorrelation
 %                               function
@@ -26,29 +24,25 @@ switch nargin
         file = '';
         plot_spec = 0;
     case 5
-        M = varargin{1};
-        method_eig = varargin{2};
+        method_eig = varargin{1};
         method_autocorr = 'fft';
         file = '';
         plot_spec = 0;
     case 6
-        M = varargin{1};
-        method_eig = varargin{2};
-        method_autocorr = varargin{3};
+        method_eig = varargin{1};
+        method_autocorr = varargin{2};
         file = '';
         plot_spec = 0;
     case 7
-        M = varargin{1};
-        method_eig = varargin{2};
-        method_autocorr = varargin{3};
+        method_eig = varargin{1};
+        method_autocorr = varargin{2};
         file = varargin{3};
         plot_spec = 0;
     case 8
-        M = varargin{1};
-        method_eig = varargin{2};
-        method_autocorr = varargin{3};
-        file = varargin{4};
-        plot_spec = varargin{5};
+        method_eig = varargin{1};
+        method_autocorr = varargin{2};
+        file = varargin{3};
+        plot_spec = varargin{4};
     otherwise
         error('Wrong number of inputs');
 end
@@ -59,17 +53,16 @@ R = estimate_autocorrelation_function(x, N, method_autocorr);
 %take last half of autocorrelation only
 R = R(N+1:end);
 
-if nargin == 4
-    %M is the number of antenna, or the dimension of the autocorrelation matrix
-    %in our case.
-    period = find_periodicity(R,0.05);
-    %take more periods for better estimation
-    M =period*floor(N/period);
-    %if signal is not periodic, or too short to be periodic
-    if(M < 1)
-        M = N;
-    end
+%M is the number of antenna, or the dimension of the autocorrelation matrix
+%in our case.
+period = find_periodicity(R,0.05);
+%take more periods for better estimation
+M =period*floor(N/period);
+%if signal is not periodic, or too short to be periodic
+if(M < 1)
+    M = N;
 end
+
 %get autocorrelation matrix
 Rx = toeplitz(R(1:M));
 
@@ -92,7 +85,7 @@ else
     [eig_vec,eig_vals] = eig_decomp(Rx,method_eig,niter);
 end
 
-[eig_vals_sorted, inds] = sort(abs(diag(eig_vals)),'descend');
+[~, inds] = sort(abs(diag(eig_vals)),'descend');
 
 %twice the number of real sinusoids
 p = 2*nsignals;

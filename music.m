@@ -1,17 +1,57 @@
-function [peaks,freqs] = music(x, fs, nsignals, nbins, M)
+function [peaks,freqs] = music(x, fs, nsignals, nbins, varargin)
 
 %% 
-% MUSIC algorithm for sinusoid parameter estimation
+% MUSIC algorithm for sinusoid parameter estimation.
+% Inputs:
 % x - signal corrupted with white noise
 % fs - sampling frequency - required for plotting pseudospectrum
 % nsignals - number of real sinusoids in signal
 % nbins - number of bins in search space
-% M - autocorrelation matrix order (ideally should be calcuated from ACF
+% M (optional) - autocorrelation matrix order (ideally should be calcuated from ACF
 % periodicity, but included just for plotting accuracy vs M).
+% method_eig (optional) - method used for eigenvalue decomposition
+% method_autocorr (optional) - method used for calculating autocorrelation
+%                               function
+% file (optional) - name of the signal to be plotted
+% plot_spec (optional) - whether to plot the pseudospectrum
+% Returns:
+% peaks - array of peak values
+% freqs - frequencies at which the peaks are found, in Hz
 %%
 
-method_eig = 'default';
-method_autocorr = 'fft';
+switch nargin
+    case 4
+        method_eig = 'default';
+        method_autocorr = 'fft';
+        file = '';
+        plot_spec = 0;
+    case 5
+        M = varargin{1};
+        method_eig = varargin{2};
+        method_autocorr = 'fft';
+        file = '';
+        plot_spec = 0;
+    case 6
+        M = varargin{1};
+        method_eig = varargin{2};
+        method_autocorr = varargin{3};
+        file = '';
+        plot_spec = 0;
+    case 7
+        M = varargin{1};
+        method_eig = varargin{2};
+        method_autocorr = varargin{3};
+        file = varargin{3};
+        plot_spec = 0;
+    case 8
+        M = varargin{1};
+        method_eig = varargin{2};
+        method_autocorr = varargin{3};
+        file = varargin{4};
+        plot_spec = varargin{5};
+    otherwise
+        error('Wrong number of inputs');
+end
 
 N = length(x);
 %estimate autocorrelation function
@@ -77,13 +117,13 @@ end
 [peaks,freqs] = find_peaks(abs(P),nsignals);
 freqs = (freqs-1)/length(P) * fs/2;
 
-h = figure;
-plot(omega/pi * (fs/2), abs(P));hold on;grid on;
-plot(freqs, peaks, '*');hold off;grid on;
-xlim([0,0.01]);
-ylabel('Pseudospectrum');
-xlabel('Frequency in Hz');
-
+if plot_spec
+    plot(omega/pi * (fs/2), abs(P));hold on;grid on;
+    plot(freqs, peaks, '*');hold off;grid on;
+    xlim([0,0.01]);
+    ylabel('Pseudospectrum');
+    xlabel('Frequency in Hz');
+    title(strcat('MUSIC ', file));
 end
 
 

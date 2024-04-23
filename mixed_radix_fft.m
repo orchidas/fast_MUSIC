@@ -4,8 +4,10 @@ function [X] = mixed_radix_fft(x, N)
 % Function to compute mixed radix FFT for any composite length N
 % according to algorithm given in 'Self-sorting mixed radix fast Fourier
 % transforms' - C Temperton, published in Journal of Computational Physics
-% X - DFT of x
+% Input:
 % x - Input vector of length(N), can be real or complex
+% Returns
+% X - DFT of x
 %%
 
 C = zeros(N,1);

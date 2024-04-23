@@ -3,12 +3,14 @@ function [bounds] = crb(p,N,theta,sigma_z)
 %%
 % Function to calculate Cramer Rao bound for a sum of real sinusoids
 % in noise for unbiased estimator - See "Modern Spectral Estimation" 
-% by Steven Kay, Section 13.4
+% by Steven Kay, Section 13.4.
+% Inputs:
 % p - number of real sinusoids
 % N - number of data points available
 % theta - a vector consisting of all amplitudes, frequencies and phases,
 %         in order - [f1,a1,phi1,...,fp,ap,phip]
 % sigma_z = variance of noise corrupting the signal
+% Returns:
 % bounds - array containing CRB for each parameter in theta
 %% 
 

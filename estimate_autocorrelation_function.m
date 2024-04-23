@@ -2,9 +2,13 @@ function [R_hat,M] = estimate_autocorrelation_function(data, nlags, method)
 
 %%
 % Unbiased estimation of autocorrelation function
+% Inputs:
 % data - input time domain signal
 % nlags - number of lags for which to calculate R_hat
-% method - direct/fft
+% method - direct/fft, FFT is much faster
+% Outputs:
+% R_hat - autocorrelation function as a function of lages
+% M - number of lags
 %%
 
 if(nargin < 3)
@@ -28,18 +32,13 @@ elseif strcmp(method,'fft')
     L = M;
     nfft = 2^nextpow2(2*M-1);
     R_hat = ifft( fft(data,nfft) .* conj(fft(data,nfft)) );
-    %# rearrange and keep values corresponding to lags: -(len-1):+(len-1)
-%     R_hat = [R_hat(end-M+2:end) , R_hat(1:M)];
-%     %remove bias (remove triangular weightings)
-%     l = [M-1:-1:0, 1:M-1];
+    % rearrange and keep values corresponding to lags: -(len-1):+(len-1)
     R_hat = [R_hat(end-M+1:end) , R_hat(1:M)];
     l = [M-1:-1:0, 0:M-1];
+    % remove bias (remove triangular weightings)
     R_hat = R_hat./(L-l);
 end
 
-% figure;
-% plot(R_hat);title('Autocorrelation function');
-% xlabel('Lags');
 
 
 end

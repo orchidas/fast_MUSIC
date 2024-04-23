@@ -4,11 +4,15 @@ function [peaks,freqs] = qifft(x,fs,N,win,zpf,npeaks)
 % Quadratically Interpolated FFT (QIFFT)
 % method for estimating sinusoidal parameters from
 % peaks in spectral magnitude data
+% Inputs:
 % x - block of signal
 % N - length of fft (power of 2)
 % win - type of window, rect, hann, ham, black
 % zpf - zero padding factor
 % npeaks - number of peaks in spectrum
+% Returns:
+% peaks - array of peaks
+% freqs - frequencies at which the peaks are found in Hz
 %%
 
 

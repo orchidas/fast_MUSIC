@@ -2,8 +2,12 @@ function [period] = find_periodicity(x, thresh, varargin)
 
 %%
 % Finds periodicity in autocorrelation function using AMDF
+% Inputs:
 % x - input time domain signal
 % thresh - threshold for peak calculation
+% plot_func (optional_ - whether to plot the AMDF function
+% Returns:
+% period - periodicity of signal in samples
 %%
 
 switch nargin

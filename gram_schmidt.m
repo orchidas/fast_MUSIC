@@ -2,7 +2,9 @@ function [Q,R] = gram_schmidt(A)
 
 %%
 % QR factorization with gram schmidt orthogonalization
+% Inputs:
 % A - input square matrix (size NxN)
+% Returns:
 % Q - matrix with orthonormal vectors along the column
 % R = upper triangular matrix
 %%

@@ -1,12 +1,17 @@
 function [peaks,freqs,M] = fast_music(x, fs, nsignals, nbins, varargin)
 
 %% 
-% Replace eigenvalue decomposition in MUSIC with FFT
+% Replace eigenvalue decomposition in MUSIC with FFT.
 % Inputs:
 % x - signal
 % fs - sampling frequency, required for plotting pseudospectrum
 % nsignals - number of real sinusoids in signal
 % nbins - number of points in search space
+% method_eig (optional) - method used for eigenvalue decomposition
+% method_autocorr (optional) - method used for calculating autocorrelation
+%                               function
+% file (optional) - name of the signal to be plotted
+% plot_spec (optional) - whether to plot the pseudospectrum
 % Returns:
 % peaks : pseudospectrum peaks values
 % freqs : frequencies of the peaks in Hz

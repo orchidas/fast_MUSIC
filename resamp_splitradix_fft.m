@@ -1,11 +1,12 @@
 function [X] = resamp_splitradix_fft(x,N,D)
 
-%Resample data so that it is periodic with a power of 2
-%and perform splitradix fft on it
-%x - data to be resampled
-%N - required fft length (power of 2)
-%P - actual fft length
-
+%%
+% Resample data so that it is periodic with a power of 2
+% and perform splitradix fft on it
+% x - data to be resampled
+% N - required fft length (power of 2)
+% D - actual fft length
+%%
 [P,Q] = rat(N/D);
 x_resamp = resample(x,P,Q);
 

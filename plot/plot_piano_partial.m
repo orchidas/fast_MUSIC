@@ -36,18 +36,8 @@ for n = 1:nns
 
 end
 
-% figure(1); 
-% plot(f, 20*log10(abs(tfs(1:nbins+1,:))/max(abs(tfs(:))))); grid; hold on;
-% %plot([freqs_foundfm_L';freqs_foundfm_L'],[-60;0]*ones(1,nns),'-o');hold on;
-% %plot([freqs_foundfm_U';freqs_foundfm_U'],[-60;0]*ones(1,nns),'-o');hold off;
-% ylim([-60 0]);
-% xlim([2660,2680]);
-
 %load peak_plots;
-% heights = zeros(nns,npeaks);
 for n = 1:nns
-    %heights(n,1) = interp1(f',20*log10(abs(tfs(1:nbins+1,n))/max(abs(tfs(:)))), freqs_foundfm_L(n));
-    %heights(n,2) = interp1(f',20*log10(abs(tfs(1:nbins+1,n))/max(abs(tfs(:)))), freqs_foundfm_U(n));
     figure(n);
     plot(f',20*log10(abs(tfs(1:nbins+1,n))/max(abs(tfs(:)))));hold on;grid;
     plot([freqs_foundfm_L(n);freqs_foundfm_L(n)],[-60;0],'b-o');hold on;
@@ -59,5 +49,3 @@ for n = 1:nns
     xlim([2660,2680]);
 end
 
-%plot([freqs_foundfm_L';freqs_foundfm_U'], [heights(:,1)';heights(:,2)'],'o');
-%plot(freqs_foundfm_U, heights(:,2),'o');hold off;

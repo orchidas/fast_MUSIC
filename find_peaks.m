@@ -1,10 +1,16 @@
-function [peaks,freqs] = find_peaks(Xwdb, maxPeaks)
+function [peaks,freqs] = find_peaks(Xwdb, maxPeaks, varargin)
 
-%finds peaks in signal/plot
-%Xwdb - Y VALUES
-%maxPeaks - maximum number of peaks we are looking for
-
-
+%%
+% Finds peaks in signal
+% Xwdb - signal in dB
+% maxPeaks - maximum number of peaks we are looking for
+% do_parabolic_interp - wheter to do parabolic interpolation (y/n)
+%%
+if nargin == 2
+    do_parabolic_interp = 'n';
+else
+    do_parabolic_interp = varargin{1};
+end
 allPeaks = [];
 indPos = [];
 k = 1;
@@ -34,16 +40,18 @@ freqs = inds;
 %-- Do parabolic interpolation in dB magnitude to find more accurate peak --%
 %-- and frequency estimates --%
 
-for i=1:maxPeaks
-    %idx=find(Xwdb==peaks(i));
-    idx = inds(i);
-    %parabolic interpolation
-    a=Xwdb(idx-1);
-    b=Xwdb(idx);
-    c=Xwdb(idx+1);
-    p = 0.5*((a-c)/(a+c-2*b));
-    peaks(i) = b - (0.25*(a-c)*p);
-    freqs(i) = (idx + p); %in bins
+if strcmp(do_parabolic_interp, 'y')
+    for i=1:maxPeaks
+        %idx=find(Xwdb==peaks(i));
+        idx = inds(i);
+        %parabolic interpolation
+        a=Xwdb(idx-1);
+        b=Xwdb(idx);
+        c=Xwdb(idx+1);
+        p = 0.5*((a-c)/(a+c-2*b));
+        peaks(i) = b - (0.25*(a-c)*p);
+        freqs(i) = (idx + p); %in bins
+    end
 end
 
 

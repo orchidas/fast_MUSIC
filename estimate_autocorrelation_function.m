@@ -1,8 +1,11 @@
 function [R_hat,M] = estimate_autocorrelation_function(data, nlags, method)
 
-%Unbiased estimation of autocorrelation function from data
-%nlags - number of lags for which to calculate R_hat
-%method - direct/fft
+%%
+% Unbiased estimation of autocorrelation function
+% data - input time domain signal
+% nlags - number of lags for which to calculate R_hat
+% method - direct/fft
+%%
 
 if(nargin < 3)
     method = 'direct';

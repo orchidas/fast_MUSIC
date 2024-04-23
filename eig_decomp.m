@@ -1,14 +1,15 @@
 function [V,D] = eig_decomp(X, method, niter)
 
-%function that does eigenvalue decomposition with the QR algorithm
-%V - eigenvectors, D = diagonal matrix with eigenvalues
-%X - input matrix (must be square)
-%niter = number of iterations
-%method - algorithm to be used :
-%gram_schmidt - gram schmidt QR O(n^3)
-%hessenberg - hessenberg QR O(n^2)
-%tridiagonal - symmetric tridiagonal QR with implicit Wilkinson shift
-
+%%
+% Function that does eigenvalue decomposition with the QR algorithm
+% V - eigenvectors, D = diagonal matrix with eigenvalues
+% X - input matrix (must be square)
+% niter = number of iterations
+% method - algorithm to be used :
+%       gram_schmidt - gram schmidt QR O(n^3)
+%       hessenberg - hessenberg QR O(n^2)
+%       tridiagonal - symmetric tridiagonal QR with implicit Wilkinson shift
+%%
 %notes - in general, U returns the Schur vectors, not the eigenvectors
 %but for normal matrices (that includes hermitian matrices), the schur
 %vectors are the eigenvectors

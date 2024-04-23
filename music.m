@@ -1,12 +1,14 @@
 function [peaks,freqs] = music(x, fs, nsignals, nbins, M)
 
-%MUSIC algorithm for sinusoid parameter estimation
-%x - signal corrupted with white noise
-%fs - sampling frequency - required for plotting pseudospectrum
-%nsignals - number of real sinusoids in signal
-%nbins - number of bins in search space
-%M - autocorrelation matrix order (ideally should be calcuated from ACF
-%periodicity, but included just for plotting accuracy vs M).
+%% 
+% MUSIC algorithm for sinusoid parameter estimation
+% x - signal corrupted with white noise
+% fs - sampling frequency - required for plotting pseudospectrum
+% nsignals - number of real sinusoids in signal
+% nbins - number of bins in search space
+% M - autocorrelation matrix order (ideally should be calcuated from ACF
+% periodicity, but included just for plotting accuracy vs M).
+%%
 
 method_eig = 'default';
 method_autocorr = 'fft';
@@ -61,7 +63,6 @@ noise_subspace = noise_eigvec*noise_eigvec';
 
 %since the signal is real, our search space can be over positive
 %frequencies only
-%omega = linspace(-pi,pi,nbins);
 omega = linspace(0,pi,nbins/2+1);
 omega = omega(1:end-1);
 k = 0:M-1;
@@ -74,7 +75,6 @@ for n = 1:length(omega)
 end
 %frequency estimates
 [peaks,freqs] = find_peaks(abs(P),nsignals);
-%freqs = -pi + freqs*(2*pi/length(P));
 freqs = (freqs-1)/length(P) * fs/2;
 
 h = figure;
@@ -82,11 +82,7 @@ plot(omega/pi * (fs/2), abs(P));hold on;grid on;
 plot(freqs, peaks, '*');hold off;grid on;
 xlim([0,0.01]);
 ylabel('Pseudospectrum');
-%xlim([2400,2900]);ylim([0,1.1*max(peaks)]);
 xlabel('Frequency in Hz');
-title(strcat('MUSIC ', file));
-%savefig(h,strcat('../piano data/A3/music-',file,'.fig'));
-
 
 end
 

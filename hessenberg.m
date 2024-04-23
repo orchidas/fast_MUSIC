@@ -1,8 +1,12 @@
 function [H,U] = hessenberg(A,sym)
 
-%Function to compute Hessnberg matrix from A using Householder reflections.
-%H - hessenberg matrix, U - eigenvectors
-%sym - is A symmetric?
+%%
+% Function to compute Hessnberg matrix from A using Householder reflections.
+% A - input matrix
+% sym - is A symmetric?
+% H - hessenberg matrix
+% U - eigenvectors
+%% 
 
 if(nargin == 1)
     sym = 'nsym';

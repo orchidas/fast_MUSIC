@@ -8,7 +8,7 @@ function myspecgram (x, fs, frameSize, hopSize, fftSize)
 % frameSize: frame size (in samples) = window length (make it odd)
 % hopSize: time between start-times of successive windows (in samples)
 % fftSize: sets the zero-padding factor - defaults to length(x)
-% Orchisama Das
+% Author - Orchisama Das
 
 N = length(x);
 if(frameSize > N)

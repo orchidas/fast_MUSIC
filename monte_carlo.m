@@ -21,57 +21,38 @@ mse_music = zeros(nsig,length(snr));
 mse_fmusic = zeros(nsig,length(snr));
 mse_qifft = zeros(nsig,length(snr));
 %this is in radians
-%sig_freqs = [-2.6,-2.4,2.4,2.6];
-%sig_freqs = [-0.05,-0.04,0.04,0.05];
 sig_freqs = [0.004,0.005]*2*pi;
-%sig_freqs = [-0.26,0.26]*2*pi;
-%sig_freqs = [-0.05,0.05];
 
-%theta = [2.4/(2*pi),1,0,2.6/(2*pi),0.5,0];
-%theta = [0.04/(2*pi), 1, 0, 0.05/(2*pi), 0.5, 0];
 theta = [0.004, 1, 0, 0.005, 0.5, 0];
-%theta = [0.26,1,0];
-%theta = [0.05/(2*pi) 1 0];
 snr_s = zeros(nsig, length(snr));
 
 for k = 1:length(snr)
     
     sigma_z = 10^(-snr(k)/10);
     for l = 1:nsims
-        %y = cos(2.4.*n) + 0.5*cos(2.6.*n + phi(l));
-        y = cos(2*pi*0.004.*n) + 0.5*cos(2*pi*0.005.*n + phi(l));
-        %y = cos(2*pi*0.26.*n + phi(l));
-        %y = cos(0.05.*n + phi(l));
+        y = cos(2*pi*sig_freqs(1).*n) + 0.5*cos(2*pi*sig_freqs(2).*n + phi(l));
         theta(end) = phi(l);
         y_norm = y./max(abs(y));
         x = awgn(y_norm, snr(k));
         bounds(l,:) = crb(nsig,N,theta,sigma_z);
-        [peaks,freqs_fmusic,M] = fast_music(x,1, nsig, nbins, 'default', 'fft','');
+        [~,freqs_fmusic,M] = fast_music(x,1, nsig, nbins, 'default', 'fft','');
         freqs_fmusic = sort(freqs_fmusic);
         [peaks,freqs_music] = music(x,1, nsig, nbins, 'default','fft','',200);
         freqs_music = sort(freqs_music);
-%         [peaks,freqs_qifft] = qifft(x,1,4096,'win',5,nsig);
-%         freqs_qifft = sort(freqs_qifft);
+        [peaks,freqs_qifft] = qifft(x,1,4096,'win',5,nsig);
+        freqs_qifft = sort(freqs_qifft);
         for m = 1:nsig
             err_music(l,m) = freqs_music(m) - sig_freqs(m)/(2*pi);
             err_fmusic(l,m) = freqs_fmusic(m) - sig_freqs(m)/(2*pi);
-            %err_qifft(l,m) = freqs_qifft(m) - sig_freqs(m)/(2*pi);
+            err_qifft(l,m) = freqs_qifft(m) - sig_freqs(m)/(2*pi);
         end
     end
     
     for m = 1:nsig
         %total error in DFS bins
-        %mse_music(m,k) = var(err_music(:,m));
         mse_music(m,k) = mean(err_music(:,m).^2);
-        %mse_fmusic(m,k) = var(err_fmusic(:,m));
         mse_fmusic(m,k) = mean(err_fmusic(:,m).^2);
-        %mse_qifft(m,k) = var(err_qifft(:,m));
-        %mse_qifft(m,k) = mean(err_qifft(:,m).^2);
-        %CRB in DFS bins - these bounds work if the spacing between 2
-        %frequencies is 1.8 bins or more
-        %spectrum SNR
-        %snr_s(m,k) = N*(theta(3*(m-1)+2)^2)/(sigma_z);
-        %crb_bounds(m,k) = 1.5/(pi^2 * snr_s(m,k));
+        mse_qifft(m,k) = mean(err_qifft(:,m).^2);
     end
     crb_bounds(:,k) = mean(bounds,1);
      
@@ -79,19 +60,6 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %plot MSE with CRB
-
-% for m = 1:nsig
-%     figure(m);
-%     %plot(10*log10(snr_s(m,:)), 10*log10(crb_bounds(3*(m-1)+1,:)*(N^2)+eps));grid on;hold on;
-%     plot(10*log10(snr_s(m,:)), 10*log10(crb_bounds(m,:)+eps));grid on;hold on;
-%     plot(10*log10(snr_s(m,:)), 10*log10(mse_music(m,:)+eps));grid on;hold on;
-%     plot(10*log10(snr_s(m,:)), 10*log10(mse_fmusic(m,:)+eps));grid on;hold on;
-%     plot(10*log10(snr_s(m,:)), 10*log10(mse_qifft(m,:)+eps));grid on;hold off;
-%     xlabel('Spectrum SNR in dB');ylabel('Mean squared error in bins (dB)');
-%     title(strcat('Frequency of sinusoid = ',num2str(sig_freqs(nsig+m)),'rad'));
-%     %axis([-20,80,-100,40]);
-%     legend('CRB','MUSIC','fast MUSIC','QIFFT');
-% end
 
 for m = 1:nsig
     figure(m);
@@ -101,14 +69,14 @@ for m = 1:nsig
         'MarkerIndices',1:5:length(snr));grid on;hold on;
     plot(snr, 10*log10(mse_fmusic(m,:)+eps),'-x','MarkerSize',8,...
         'MarkerIndices',1:5:length(snr));grid on;hold on;
-    %plot(snr, 10*log10(mse_qifft(m,:)+eps),'-v','MarkerSize',8,...
-    %    'MarkerIndices',1:5:length(snr));grid on;hold off;
+    plot(snr, 10*log10(mse_qifft(m,:)+eps),'-v','MarkerSize',8,...
+        'MarkerIndices',1:5:length(snr));grid on;hold off;
     xlabel('SNR in dB');ylabel('Mean squared error (dB)');
     title(strcat('Frequency of sinusoid = ',num2str(sig_freqs(m)/(2*pi)),'Hz'));
-    %legend('CRB','MUSIC','fast MUSIC','QIFFT');
+    legend('CRB','MUSIC','fast MUSIC','QIFFT');
     legend('CRB','MUSIC','fast MUSIC');
     %save figure as eps file
-    %print(strcat('monte_carlo_',num2str(sig_freqs(m))/(2*pi),'Hz'),'-deps');
+    print(strcat('monte_carlo_',num2str(sig_freqs(m))/(2*pi),'Hz'),'-deps');
 end
 
 
